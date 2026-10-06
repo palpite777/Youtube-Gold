@@ -7,15 +7,39 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <style>
+      :root {
+        --bg-1: #070b16;
+        --bg-2: #0d1322;
+        --bg-3: #121a2d;
+        --panel: rgba(15, 23, 42, 0.92);
+        --panel-2: rgba(17, 24, 39, 0.98);
+        --border: rgba(148, 163, 184, 0.18);
+        --soft-border: rgba(148, 163, 184, 0.1);
+        --primary: #a855f7;
+        --primary-2: #8b5cf6;
+        --primary-3: #c084fc;
+        --danger: #ef4444;
+        --danger-2: #dc2626;
+        --success: #22c55e;
+        --warning: #f59e0b;
+        --info: #60a5fa;
+        --text: #f8fafc;
+        --text-soft: #dbe3f0;
+        --text-muted: #a5b4cf;
+        --terminal: #7ef9a7;
+        --terminal-bg: #02060d;
+      }
+
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
 
-      body {
-        background: linear-gradient(135deg, #0a0e27 0%, #0f1629 40%, #1a1f3a 100%);
-        color: #e2e8f0;
+      html, body {
+        background: radial-gradient(circle at top, rgba(168, 85, 247, 0.12), transparent 28%),
+                    linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 45%, var(--bg-3) 100%);
+        color: var(--text);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         min-height: 100vh;
         padding: 20px;
@@ -28,17 +52,19 @@
 
       .header-section {
         text-align: center;
-        margin-bottom: 40px;
-        background: rgba(15, 23, 42, 0.6);
-        padding: 30px;
-        border-radius: 20px;
-        border: 1px solid rgba(148, 163, 184, 0.1);
+        margin-bottom: 38px;
+        background: linear-gradient(180deg, rgba(17, 24, 39, 0.86), rgba(15, 23, 42, 0.8));
+        padding: 30px 26px;
+        border-radius: 22px;
+        border: 1px solid var(--soft-border);
+        box-shadow: 0 18px 50px rgba(15, 23, 42, 0.35);
       }
 
       .header-section h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        background: linear-gradient(90deg, #a855f7, #7c3aed);
+        font-size: clamp(2.1rem, 3vw, 3rem);
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        background: linear-gradient(90deg, #f5d0fe, #c084fc, #8b5cf6);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -46,256 +72,268 @@
       }
 
       .header-section p {
-        color: #94a3b8;
-        font-size: 1.1rem;
+        color: var(--text-muted);
+        font-size: 1.08rem;
+        margin: 0;
       }
 
       .card {
-        background: rgba(15, 23, 42, 0.85);
-        border: 1px solid rgba(148, 163, 184, 0.15);
-        border-radius: 16px;
-        backdrop-filter: blur(15px);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.9));
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 18px 40px rgba(2, 6, 23, 0.55);
         overflow: hidden;
       }
 
       .nav-tabs {
-        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        border-bottom: 1px solid var(--soft-border);
         gap: 10px;
       }
 
       .nav-tabs .nav-link {
-        color: #94a3b8;
+        color: var(--text-muted);
         border: none;
         border-bottom: 3px solid transparent;
         border-radius: 12px 12px 0 0;
         padding: 15px 25px;
-        font-weight: 600;
-        transition: all 0.3s ease;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        background: transparent;
+        transition: all 0.25s ease;
       }
 
       .nav-tabs .nav-link:hover {
-        color: #e2e8f0;
-        background: rgba(168, 85, 247, 0.1);
+        color: var(--text);
+        background: rgba(168, 85, 247, 0.08);
       }
 
       .nav-tabs .nav-link.active {
-        color: #a855f7;
-        border-bottom-color: #a855f7;
-        background: rgba(168, 85, 247, 0.1);
+        color: #f3e8ff;
+        border-bottom-color: var(--primary);
+        background: linear-gradient(180deg, rgba(168, 85, 247, 0.12), rgba(168, 85, 247, 0.04));
+        box-shadow: inset 0 -2px 0 var(--primary);
       }
 
       .form-label {
-        color: #cbd5e1;
-        font-weight: 600;
+        color: var(--text-soft);
+        font-weight: 700;
         margin-bottom: 8px;
         display: block;
       }
 
       .form-control, .form-select {
-        background: rgba(30, 41, 59, 0.8);
-        border: 1px solid rgba(148, 163, 184, 0.2);
-        color: #e2e8f0;
-        padding: 12px 16px;
-        border-radius: 10px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        color: var(--text);
+        padding: 12px 14px;
+        border-radius: 12px;
         font-size: 1rem;
-        transition: all 0.3s ease;
-      }
-
-      .form-control:focus, .form-select:focus {
-        background: rgba(30, 41, 59, 1);
-        border-color: #a855f7;
-        color: #e2e8f0;
-        box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+        transition: all 0.25s ease;
+        box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.1);
       }
 
       .form-control::placeholder {
-        color: #64748b;
+        color: #7d8ba5;
+      }
+
+      .form-control:focus, .form-select:focus {
+        background: rgba(15, 23, 42, 1);
+        border-color: rgba(168, 85, 247, 0.9);
+        color: var(--text);
+        box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.16);
       }
 
       .btn {
-        font-weight: 700;
+        font-weight: 800;
         padding: 12px 24px;
-        border-radius: 10px;
+        border-radius: 12px;
         border: none;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        transition: all 0.25s ease;
+        letter-spacing: 0.3px;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
       }
 
       .btn-start {
-        background: linear-gradient(90deg, #a855f7, #7c3aed);
+        background: linear-gradient(135deg, var(--primary), var(--primary-2));
         color: white;
         flex: 1;
-      }
-
-      .btn-start:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);
+        box-shadow: 0 12px 24px rgba(139, 92, 246, 0.35);
       }
 
       .btn-start:disabled {
-        opacity: 0.6;
+        opacity: 0.62;
         cursor: not-allowed;
+        transform: none;
       }
 
       .btn-stop {
-        background: linear-gradient(90deg, #dc2626, #ef4444);
+        background: linear-gradient(135deg, var(--danger), var(--danger-2));
         color: white;
         flex: 1;
-      }
-
-      .btn-stop:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+        box-shadow: 0 12px 24px rgba(220, 38, 38, 0.32);
       }
 
       .btn-stop:disabled {
-        opacity: 0.6;
+        opacity: 0.62;
         cursor: not-allowed;
+        transform: none;
       }
 
       .btn-collect {
-        background: linear-gradient(90deg, #22c55e, #16a34a);
+        background: linear-gradient(135deg, #34d399, #16a34a);
         color: white;
-      }
-
-      .btn-collect:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+        box-shadow: 0 12px 24px rgba(16, 185, 129, 0.32);
       }
 
       .btn-clear {
-        background: rgba(107, 114, 128, 0.3);
-        border: 1px solid rgba(107, 114, 128, 0.5);
-        color: #cbd5e1;
-        padding: 8px 16px;
+        background: rgba(148, 163, 184, 0.12);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        color: var(--text-soft);
+        padding: 8px 15px;
         font-size: 0.9rem;
       }
 
       .btn-clear:hover {
-        background: rgba(107, 114, 128, 0.5);
+        background: rgba(148, 163, 184, 0.18);
       }
 
-      .input-group {
-        gap: 10px;
+      .row-with-gap {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 22px;
       }
 
       .table-responsive {
-        border-radius: 10px;
+        border-radius: 12px;
         overflow: hidden;
+        border: 1px solid rgba(148, 163, 184, 0.12);
       }
 
       .table {
-        color: #cbd5e1;
+        color: var(--text-soft);
         margin-bottom: 0;
+        background: transparent;
       }
 
       .table thead th {
-        background: rgba(30, 41, 59, 0.9);
-        color: #a855f7;
-        border-color: rgba(148, 163, 184, 0.1);
-        font-weight: 700;
+        background: rgba(15, 23, 42, 0.9);
+        color: #f0abfc;
+        border-color: rgba(148, 163, 184, 0.12);
+        font-weight: 800;
         padding: 15px;
         text-transform: uppercase;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         letter-spacing: 0.5px;
       }
 
       .table tbody td {
         padding: 15px;
         border-color: rgba(148, 163, 184, 0.1);
+        color: var(--text-soft);
         vertical-align: middle;
       }
 
       .table tbody tr:hover {
-        background: rgba(168, 85, 247, 0.1);
+        background: rgba(168, 85, 247, 0.06);
+      }
+
+      .table tbody tr td a {
+        color: #c4b5fd;
+      }
+
+      .table tbody tr td a:hover {
+        color: #f3e8ff;
+      }
+
+      .badge {
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 0.8rem;
+      }
+
+      .badge-info {
+        background: rgba(96, 165, 250, 0.16);
+        color: #bfdbfe;
+      }
+
+      .badge-success {
+        background: rgba(34, 197, 94, 0.14);
+        color: #bbf7d0;
+      }
+
+      .badge-danger {
+        background: rgba(239, 68, 68, 0.14);
+        color: #fecaca;
+      }
+
+      .badge-warning {
+        background: rgba(245, 158, 11, 0.14);
+        color: #fde68a;
       }
 
       .terminal-monitor {
-        background: #0a0e27;
+        background: linear-gradient(180deg, rgba(2, 6, 13, 1), rgba(5, 11, 18, 1));
         border: 1px solid rgba(34, 197, 94, 0.3);
-        border-radius: 10px;
+        border-radius: 12px;
         padding: 20px;
         font-family: 'Courier New', monospace;
-        font-size: 0.95rem;
+        font-size: 0.96rem;
         min-height: 250px;
         max-height: 400px;
         overflow-y: auto;
-        color: #22c55e;
-        line-height: 1.6;
-        box-shadow: inset 0 0 20px rgba(34, 197, 94, 0.05);
+        color: var(--terminal);
+        line-height: 1.7;
+        box-shadow: inset 0 0 28px rgba(34, 197, 94, 0.05);
       }
 
       .terminal-monitor::-webkit-scrollbar {
-        width: 8px;
+        width: 9px;
       }
 
       .terminal-monitor::-webkit-scrollbar-track {
-        background: rgba(30, 41, 59, 0.5);
-        border-radius: 10px;
+        background: rgba(15, 23, 42, 0.7);
       }
 
       .terminal-monitor::-webkit-scrollbar-thumb {
         background: rgba(168, 85, 247, 0.5);
-        border-radius: 10px;
-      }
-
-      .terminal-monitor::-webkit-scrollbar-thumb:hover {
-        background: rgba(168, 85, 247, 0.7);
+        border-radius: 999px;
       }
 
       .terminal-line {
         margin-bottom: 8px;
+        color: #d1fae5;
       }
 
-      .terminal-line.error {
-        color: #ef4444;
-      }
-
-      .terminal-line.success {
-        color: #22c55e;
-      }
-
-      .terminal-line.warning {
-        color: #f59e0b;
-      }
-
-      .terminal-line.info {
-        color: #3b82f6;
-      }
+      .terminal-line.error { color: #fca5a5; }
+      .terminal-line.success { color: #86efac; }
+      .terminal-line.warning { color: #fcd34d; }
+      .terminal-line.info { color: #bfdbfe; }
 
       .monitor-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 15px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        margin-bottom: 14px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--soft-border);
       }
 
       .monitor-header h5 {
-        color: #22c55e;
+        color: #d1fae5;
         margin: 0;
-        font-weight: 700;
-      }
-
-      .row-with-gap {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        margin-bottom: 20px;
-      }
-
-      .form-group-compact {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .button-group {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
+        font-weight: 800;
       }
 
       .status-indicator {
@@ -304,11 +342,12 @@
         height: 12px;
         border-radius: 50%;
         margin-right: 8px;
-        animation: pulse 2s infinite;
+        vertical-align: middle;
+        animation: pulse 1.8s ease-in-out infinite;
       }
 
       .status-indicator.idle {
-        background-color: #64748b;
+        background-color: #94a3b8;
       }
 
       .status-indicator.running {
@@ -319,23 +358,35 @@
         background-color: #ef4444;
       }
 
+      .text-muted, .text-secondary {
+        color: var(--text-muted) !important;
+      }
+
+      .text-light {
+        color: var(--text) !important;
+      }
+
+      .text-primary {
+        color: #d8b4fe !important;
+      }
+
+      .text-danger {
+        color: #fca5a5 !important;
+      }
+
       @keyframes pulse {
-        0%, 100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.5;
-        }
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.55; transform: scale(0.92); }
       }
 
       .tab-pane {
-        animation: fadeIn 0.3s ease;
+        animation: fadeIn 0.28s ease;
       }
 
       @keyframes fadeIn {
         from {
           opacity: 0;
-          transform: translateY(10px);
+          transform: translateY(6px);
         }
         to {
           opacity: 1;
@@ -346,46 +397,18 @@
       .empty-state {
         text-align: center;
         padding: 40px 20px;
-        color: #94a3b8;
+        color: var(--text-muted);
       }
 
       .empty-state i {
-        font-size: 3rem;
-        margin-bottom: 15px;
-        opacity: 0.5;
-      }
-
-      .badge {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.85rem;
-      }
-
-      .badge-success {
-        background: rgba(34, 197, 94, 0.2);
-        color: #22c55e;
-      }
-
-      .badge-danger {
-        background: rgba(239, 68, 68, 0.2);
-        color: #ef4444;
-      }
-
-      .badge-warning {
-        background: rgba(245, 158, 11, 0.2);
-        color: #f59e0b;
-      }
-
-      .badge-info {
-        background: rgba(59, 130, 246, 0.2);
-        color: #3b82f6;
+        font-size: 2.6rem;
+        margin-bottom: 12px;
+        opacity: 0.75;
       }
     </style>
   </head>
   <body>
     <div class="main-container">
-      <!-- Header -->
       <div class="header-section">
         <h1>
           <i class="fas fa-video"></i> YouTube Gold
@@ -393,9 +416,7 @@
         <p>Painel Premium de Automação e Coleta de Leads</p>
       </div>
 
-      <!-- Main Card -->
       <div class="card p-4">
-        <!-- Tabs Navigation -->
         <ul class="nav nav-tabs" id="mainTabs" role="tablist">
           <li class="nav-item" role="presentation">
             <button
@@ -427,54 +448,33 @@
           </li>
         </ul>
 
-        <!-- Tabs Content -->
         <div class="tab-content mt-4" id="mainTabsContent">
-          <!-- Tab 1: Video Automation -->
           <div class="tab-pane fade show active" id="automation" role="tabpanel" aria-labelledby="automation-tab">
             <div class="row-with-gap">
-              <div class="form-group-compact">
+              <div>
                 <label for="searchQuery" class="form-label">
                   <i class="fas fa-search"></i> Termo de Busca
                 </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="searchQuery"
-                  placeholder="Ex: lofi hip hop radio"
-                  value="lofi hip hop radio"
-                />
+                <input type="text" class="form-control" id="searchQuery" placeholder="Ex: lofi hip hop radio" value="lofi hip hop radio" />
               </div>
 
-              <div class="form-group-compact">
+              <div>
                 <label for="channelName" class="form-label">
                   <i class="fas fa-user-circle"></i> Nome do Canal
                 </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="channelName"
-                  placeholder="Ex: Seu Canal"
-                  value="YouTube Gold"
-                />
+                <input type="text" class="form-control" id="channelName" placeholder="Ex: Seu Canal" value="YouTube Gold" />
               </div>
 
-              <div class="form-group-compact">
+              <div>
                 <label for="sessionCount" class="form-label">
                   <i class="fas fa-layer-group"></i> Sessões
                 </label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="sessionCount"
-                  min="1"
-                  max="50"
-                  value="1"
-                />
+                <input type="number" class="form-control" id="sessionCount" min="1" max="50" value="1" />
               </div>
             </div>
 
             <div class="row-with-gap">
-              <div class="form-group-compact">
+              <div>
                 <label for="operationMode" class="form-label">
                   <i class="fas fa-cog"></i> Modo de Operação
                 </label>
@@ -484,7 +484,7 @@
                 </select>
               </div>
 
-              <div class="form-group-compact">
+              <div>
                 <label for="invisibleMode" class="form-label">
                   <i class="fas fa-eye-slash"></i> Modo Invisível
                 </label>
@@ -504,53 +504,41 @@
               </button>
             </div>
 
-            <div class="card p-3" style="background: rgba(30, 41, 59, 0.5); border-color: rgba(148, 163, 184, 0.1);">
-              <small class="text-muted d-block mb-2">STATUS DA AUTOMAÇÃO</small>
+            <div class="card p-3" style="background: rgba(30, 41, 59, 0.55); border-color: rgba(148, 163, 184, 0.1);">
+              <small class="text-muted d-block mb-2" style="color: #cbd5e1 !important; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700;">Status da Automação</small>
               <div>
                 <span class="status-indicator idle" id="statusIndicator"></span>
-                <span id="statusText" class="text-muted">Aguardando início...</span>
+                <span id="statusText" style="color: #e2e8f0; font-weight: 600;">Aguardando início...</span>
               </div>
-              <small id="statusDetails" class="text-secondary d-block mt-2"></small>
+              <small id="statusDetails" class="d-block mt-2" style="color: #cbd5e1;">Sistema pronto</small>
             </div>
           </div>
 
-          <!-- Tab 2: Leads Collector -->
           <div class="tab-pane fade" id="leads" role="tabpanel" aria-labelledby="leads-tab">
             <div class="row-with-gap">
-              <div class="form-group-compact">
+              <div>
                 <label for="niche" class="form-label">
                   <i class="fas fa-tag"></i> Segmento / Nicho Comercial
                 </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="niche"
-                  placeholder="Ex: E-commerce, SaaS, Imóveis..."
-                />
+                <input type="text" class="form-control" id="niche" placeholder="Ex: E-commerce, SaaS, Imóveis..." />
               </div>
 
-              <div class="form-group-compact">
+              <div>
                 <label for="location" class="form-label">
                   <i class="fas fa-map-marker-alt"></i> Cidade / Região
                 </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="location"
-                  placeholder="Ex: São Paulo, SP"
-                />
+                <input type="text" class="form-control" id="location" placeholder="Ex: São Paulo, SP" />
               </div>
 
-              <div class="form-group-compact d-flex align-items-end">
+              <div class="d-flex align-items-end">
                 <button id="collectBtn" class="btn btn-collect w-100">
                   <i class="fas fa-search"></i> Coletar
                 </button>
               </div>
             </div>
 
-            <!-- Leads Table -->
             <div class="mt-4">
-              <h6 class="text-light mb-3">
+              <h6 class="text-light mb-3" style="color: #f8fafc !important; font-weight: 800;">
                 <i class="fas fa-table"></i> Leads Coletados
               </h6>
               <div class="table-responsive">
@@ -566,7 +554,7 @@
                   </thead>
                   <tbody id="leadsTable">
                     <tr>
-                      <td colspan="5" class="text-center text-muted py-4">
+                      <td colspan="5" class="text-center py-4" style="color: #cbd5e1;">
                         <i class="fas fa-inbox"></i> Nenhum lead coletado ainda
                       </td>
                     </tr>
@@ -578,7 +566,6 @@
         </div>
       </div>
 
-      <!-- Real-Time Activity Monitor -->
       <div class="card mt-4 p-4">
         <div class="monitor-header">
           <h5>
@@ -601,7 +588,6 @@
     <script>
       const BASE_URL = 'http://localhost:8080';
 
-      // DOM Elements
       const statusIndicator = document.getElementById('statusIndicator');
       const statusText = document.getElementById('statusText');
       const statusDetails = document.getElementById('statusDetails');
@@ -612,7 +598,6 @@
       const activityMonitor = document.getElementById('activityMonitor');
       const leadsTable = document.getElementById('leadsTable');
 
-      // Form Elements
       const searchQuery = document.getElementById('searchQuery');
       const channelName = document.getElementById('channelName');
       const sessionCount = document.getElementById('sessionCount');
@@ -621,12 +606,11 @@
       const niche = document.getElementById('niche');
       const location = document.getElementById('location');
 
-      // Utility Functions
       function addLogEntry(message, type = 'info') {
         const timestamp = new Date().toLocaleTimeString('pt-BR');
         const line = document.createElement('div');
         line.className = `terminal-line ${type}`;
-        
+
         let icon = '';
         switch (type) {
           case 'success':
@@ -641,7 +625,7 @@
           default:
             icon = '<i class="fas fa-info-circle"></i>';
         }
-        
+
         line.innerHTML = `${icon} [${timestamp}] ${message}`;
         activityMonitor.appendChild(line);
         activityMonitor.scrollTop = activityMonitor.scrollHeight;
@@ -652,6 +636,7 @@
         statusDetails.textContent = new Date().toLocaleTimeString('pt-BR');
 
         statusIndicator.classList.remove('idle', 'running', 'error');
+
         if (state === 'running') {
           statusIndicator.classList.add('running');
         } else if (state === 'error') {
@@ -663,9 +648,7 @@
 
       function addLeadToTable(company, segment, phone, email) {
         const emptyRow = leadsTable.querySelector('tr[colspan="5"]');
-        if (emptyRow) {
-          emptyRow.remove();
-        }
+        if (emptyRow) emptyRow.remove();
 
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -674,7 +657,7 @@
           <td><a href="tel:${phone}" class="text-decoration-none">${phone}</a></td>
           <td><a href="mailto:${email}" class="text-decoration-none">${email}</a></td>
           <td>
-            <button class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()">
+            <button class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()" style="border: 1px solid rgba(239,68,68,0.5); color: #fecaca; background: rgba(239,68,68,0.08); padding: 7px 10px; border-radius: 8px;">
               <i class="fas fa-trash"></i>
             </button>
           </td>
@@ -682,7 +665,6 @@
         leadsTable.appendChild(row);
       }
 
-      // Event Listeners
       startBtn.addEventListener('click', async () => {
         startBtn.disabled = true;
         stopBtn.disabled = false;
@@ -696,7 +678,7 @@
         };
 
         addLogEntry(`Iniciando automação com termo: "${payload.searchQuery}"`, 'info');
-        setStatus('running', 'Automação em Execução...');
+        setStatus('running', 'Automação em execução...');
 
         try {
           const response = await fetch(`${BASE_URL}/api/start`, {
@@ -706,11 +688,10 @@
           });
 
           if (response.ok) {
-            const result = await response.json();
-            addLogEntry(`✓ Automação iniciada com sucesso`, 'success');
+            addLogEntry('✓ Automação iniciada com sucesso', 'success');
             setStatus('running', 'Automação ativa e processando...');
           } else {
-            addLogEntry(`✗ Erro ao iniciar automação`, 'error');
+            addLogEntry('✗ Erro ao iniciar automação', 'error');
             setStatus('error', 'Erro ao iniciar');
             startBtn.disabled = false;
             stopBtn.disabled = true;
@@ -755,10 +736,7 @@
         collectBtn.disabled = true;
         addLogEntry(`Iniciando coleta de leads para: ${niche.value} em ${location.value}`, 'info');
 
-        const payload = {
-          niche: niche.value,
-          location: location.value,
-        };
+        const payload = { niche: niche.value, location: location.value };
 
         try {
           const response = await fetch(`${BASE_URL}/api/collect-leads`, {
@@ -792,13 +770,11 @@
         addLogEntry('Histórico de atividades limpo com sucesso', 'success');
       });
 
-      // Initialize
       window.addEventListener('load', () => {
         addLogEntry('Dashboard carregado e pronto para uso', 'success');
         setStatus('idle', 'Aguardando comandos');
       });
 
-      // Auto-refresh status every 5 seconds
       setInterval(async () => {
         try {
           const response = await fetch(`${BASE_URL}/api/status`);
@@ -810,7 +786,7 @@
             }
           }
         } catch (error) {
-          // Silent fail - connection not available
+          // silencioso
         }
       }, 5000);
     </script>
