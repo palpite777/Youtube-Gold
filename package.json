@@ -1,0 +1,15 @@
+{
+  "name": "youtube-gold",
+  "version": "1.0.0",
+  "description": "YouTube automation tool for controlled testing and research scenarios",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js --query \"lofi hip hop radio\" --min 15 --max 45",
+    "test": "node -e \"console.log('No tests configured yet')\""
+  },
+  "dependencies": {
+    "dotenv": "^16.4.0",
+    "playwright": "^1.49.1"
+  }
+}
