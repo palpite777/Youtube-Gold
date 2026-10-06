@@ -159,6 +159,29 @@
         font-size: 2rem;
         font-weight: 800;
         letter-spacing: -1px;
+        transition: all 0.3s ease;
+      }
+
+      .metric-value.pulse {
+        animation: metricPulse 0.6s ease-out;
+      }
+
+      @keyframes metricPulse {
+        0% {
+          transform: scale(1);
+          color: var(--text);
+          text-shadow: 0 0 0 rgba(34, 197, 94, 0.5);
+        }
+        50% {
+          transform: scale(1.08);
+          color: #22c55e;
+          text-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
+        }
+        100% {
+          transform: scale(1);
+          color: var(--text);
+          text-shadow: 0 0 0 rgba(34, 197, 94, 0);
+        }
       }
 
       .metric-sub {
@@ -274,10 +297,13 @@
         color: white;
         flex: 1;
         box-shadow: 0 12px 24px rgba(139, 92, 246, 0.35), 0 0 20px rgba(168, 85, 247, 0.2);
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
 
       .btn-start:hover {
         box-shadow: 0 16px 32px rgba(139, 92, 246, 0.45), 0 0 30px rgba(168, 85, 247, 0.4);
+        background: linear-gradient(135deg, var(--primary-2), #a855f7);
       }
 
       .btn-start:disabled {
@@ -287,15 +313,51 @@
         box-shadow: 0 8px 16px rgba(139, 92, 246, 0.2);
       }
 
+      .btn-start.loading {
+        pointer-events: none;
+      }
+
+      .btn-start.loading .btn-text {
+        opacity: 0;
+      }
+
+      .btn-start .spinner {
+        display: none;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .btn-start.loading .spinner {
+        display: inline-block;
+      }
+
+      .spinner-icon {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
       .btn-stop {
         background: linear-gradient(135deg, var(--danger), var(--danger-2));
         color: white;
         flex: 1;
         box-shadow: 0 12px 24px rgba(220, 38, 38, 0.32), 0 0 20px rgba(239, 68, 68, 0.15);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
 
       .btn-stop:hover {
         box-shadow: 0 16px 32px rgba(220, 38, 38, 0.42), 0 0 30px rgba(239, 68, 68, 0.3);
+        background: linear-gradient(135deg, var(--danger-2), var(--danger));
       }
 
       .btn-stop:disabled {
@@ -309,10 +371,12 @@
         background: linear-gradient(135deg, #34d399, #16a34a);
         color: white;
         box-shadow: 0 12px 24px rgba(16, 185, 129, 0.32), 0 0 20px rgba(52, 211, 153, 0.15);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
 
       .btn-collect:hover {
         box-shadow: 0 16px 32px rgba(16, 185, 129, 0.42), 0 0 30px rgba(52, 211, 153, 0.3);
+        background: linear-gradient(135deg, #16a34a, #34d399);
       }
 
       .btn-clear {
@@ -578,6 +642,19 @@
       .terminal-line {
         margin-bottom: 8px;
         color: #d1fae5;
+        animation: fadeInLine 0.4s ease-out;
+        opacity: 1;
+      }
+
+      @keyframes fadeInLine {
+        from {
+          opacity: 0;
+          transform: translateY(-5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .terminal-line.error { color: #fca5a5; }
@@ -632,6 +709,104 @@
         }
       }
 
+      /* Toast Notifications */
+      .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .toast-notification {
+        background: linear-gradient(135deg, rgba(40, 40, 40, 0.95), rgba(30, 30, 30, 0.9));
+        border: 1px solid rgba(168, 85, 247, 0.3);
+        border-radius: 12px;
+        padding: 16px 20px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 12px 40px rgba(2, 6, 23, 0.5), 0 0 30px rgba(168, 85, 247, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 320px;
+        max-width: 380px;
+        animation: toastSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        color: var(--text-soft);
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.02em;
+      }
+
+      @keyframes toastSlideIn {
+        from {
+          opacity: 0;
+          transform: translateX(100%) translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0) translateY(0);
+        }
+      }
+
+      @keyframes toastSlideOut {
+        to {
+          opacity: 0;
+          transform: translateX(100%) translateY(-20px);
+        }
+      }
+
+      .toast-notification.removing {
+        animation: toastSlideOut 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+
+      .toast-icon {
+        font-size: 1.2rem;
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .toast-notification.success {
+        border-color: rgba(34, 197, 94, 0.4);
+        box-shadow: 0 12px 40px rgba(2, 6, 23, 0.5), 0 0 30px rgba(34, 197, 94, 0.2);
+      }
+
+      .toast-notification.success .toast-icon {
+        color: #22c55e;
+      }
+
+      .toast-notification.error {
+        border-color: rgba(239, 68, 68, 0.4);
+        box-shadow: 0 12px 40px rgba(2, 6, 23, 0.5), 0 0 30px rgba(239, 68, 68, 0.2);
+      }
+
+      .toast-notification.error .toast-icon {
+        color: #ef4444;
+      }
+
+      .toast-notification.info {
+        border-color: rgba(96, 165, 250, 0.4);
+        box-shadow: 0 12px 40px rgba(2, 6, 23, 0.5), 0 0 30px rgba(96, 165, 250, 0.2);
+      }
+
+      .toast-notification.info .toast-icon {
+        color: #60a5fa;
+      }
+
+      .toast-notification.warning {
+        border-color: rgba(245, 158, 11, 0.4);
+        box-shadow: 0 12px 40px rgba(2, 6, 23, 0.5), 0 0 30px rgba(245, 158, 11, 0.2);
+      }
+
+      .toast-notification.warning .toast-icon {
+        color: #f59e0b;
+      }
+
       /* Responsividade */
       @media (max-width: 768px) {
         .metrics-row {
@@ -646,10 +821,23 @@
         .row-with-gap {
           grid-template-columns: 1fr;
         }
+
+        .toast-container {
+          right: 10px;
+          left: 10px;
+        }
+
+        .toast-notification {
+          min-width: auto;
+          max-width: none;
+        }
       }
     </style>
   </head>
   <body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <div class="main-container">
       <!-- Header -->
       <div class="header-section">
@@ -786,7 +974,12 @@
 
             <div class="button-group">
               <button id="startBtn" class="btn btn-start">
-                <i class="fas fa-rocket"></i> Iniciar Automação
+                <span class="btn-text">
+                  <i class="fas fa-rocket"></i> Iniciar Automação
+                </span>
+                <span class="spinner">
+                  <i class="spinner-icon"></i>
+                </span>
               </button>
               <button id="stopBtn" class="btn btn-stop">
                 <i class="fas fa-stop-circle"></i> Parar Tudo
@@ -896,6 +1089,7 @@
       const clearLogsBtn = document.getElementById('clearLogsBtn');
       const activityMonitor = document.getElementById('activityMonitor');
       const leadsTable = document.getElementById('leadsTable');
+      const toastContainer = document.getElementById('toastContainer');
 
       // Metrics
       const totalViewsEl = document.getElementById('totalViews');
@@ -918,9 +1112,68 @@
         proxies: 0
       };
 
-      function updateMetrics() {
-        totalViewsEl.textContent = metrics.views.toLocaleString('pt-BR');
-        minutesWatchedEl.textContent = metrics.minutes.toLocaleString('pt-BR');
+      // Toast Notification System
+      function showToast(message, type = 'info', duration = 3500) {
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${type}`;
+        
+        let icon = '';
+        switch (type) {
+          case 'success':
+            icon = '<i class="fas fa-check-circle"></i>';
+            break;
+          case 'error':
+            icon = '<i class="fas fa-exclamation-circle"></i>';
+            break;
+          case 'warning':
+            icon = '<i class="fas fa-exclamation-triangle"></i>';
+            break;
+          default:
+            icon = '<i class="fas fa-info-circle"></i>';
+        }
+
+        toast.innerHTML = `
+          <div class="toast-icon">${icon}</div>
+          <div>${message}</div>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+          toast.classList.add('removing');
+          setTimeout(() => toast.remove(), 400);
+        }, duration);
+      }
+
+      // CountUp Effect for Metrics
+      function animateCountUp(element, targetValue, duration = 800) {
+        const start = parseInt(element.textContent.replace(/\D/g, '')) || 0;
+        const increment = (targetValue - start) / (duration / 16);
+        let current = start;
+
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= targetValue) {
+            current = targetValue;
+            clearInterval(timer);
+            element.textContent = targetValue.toLocaleString('pt-BR');
+            element.classList.add('pulse');
+            setTimeout(() => element.classList.remove('pulse'), 600);
+          } else {
+            element.textContent = Math.floor(current).toLocaleString('pt-BR');
+          }
+        }, 16);
+      }
+
+      function updateMetrics(views, minutes) {
+        if (views !== undefined && views !== metrics.views) {
+          animateCountUp(totalViewsEl, views);
+          metrics.views = views;
+        }
+        if (minutes !== undefined && minutes !== metrics.minutes) {
+          animateCountUp(minutesWatchedEl, minutes);
+          metrics.minutes = minutes;
+        }
         activeProxiesEl.textContent = metrics.proxies;
       }
 
@@ -946,7 +1199,11 @@
 
         line.innerHTML = `${icon} [${timestamp}] ${message}`;
         activityMonitor.appendChild(line);
-        activityMonitor.scrollTop = activityMonitor.scrollHeight;
+        
+        // Auto scroll com animação suave
+        setTimeout(() => {
+          activityMonitor.scrollTop = activityMonitor.scrollHeight;
+        }, 50);
       }
 
       function setStatus(state, message) {
@@ -993,8 +1250,10 @@
         leadsTable.appendChild(row);
       }
 
+      // Button Event Listeners
       startBtn.addEventListener('click', async () => {
         startBtn.disabled = true;
+        startBtn.classList.add('loading');
         stopBtn.disabled = false;
 
         const payload = {
@@ -1007,6 +1266,7 @@
 
         addLogEntry(`Iniciando automação com termo: "${payload.searchQuery}"`, 'info');
         setStatus('running', 'Automação em execução...');
+        showToast('🚀 Iniciando automação...', 'info', 2000);
 
         try {
           const response = await fetch(`${BASE_URL}/api/start`, {
@@ -1018,18 +1278,23 @@
           if (response.ok) {
             addLogEntry('✓ Automação iniciada com sucesso', 'success');
             setStatus('running', 'Automação ativa e processando...');
+            showToast('✓ Automação iniciada com sucesso!', 'success');
             metrics.proxies = parseInt(payload.sessionCount);
-            updateMetrics();
+            updateMetrics(metrics.views, metrics.minutes);
           } else {
             addLogEntry('✗ Erro ao iniciar automação', 'error');
             setStatus('error', 'Erro ao iniciar');
+            showToast('✗ Erro ao iniciar automação', 'error');
             startBtn.disabled = false;
+            startBtn.classList.remove('loading');
             stopBtn.disabled = true;
           }
         } catch (error) {
           addLogEntry(`✗ Erro de conexão: ${error.message}`, 'error');
           setStatus('error', 'Erro de conexão');
+          showToast(`✗ Erro de conexão: ${error.message}`, 'error');
           startBtn.disabled = false;
+          startBtn.classList.remove('loading');
           stopBtn.disabled = true;
         }
       });
@@ -1037,9 +1302,11 @@
       stopBtn.addEventListener('click', async () => {
         stopBtn.disabled = true;
         startBtn.disabled = false;
+        startBtn.classList.remove('loading');
 
         addLogEntry('Parando automação...', 'warning');
         setStatus('idle', 'Parando...');
+        showToast('⏹ Parando automação...', 'warning', 2000);
 
         try {
           const response = await fetch(`${BASE_URL}/api/stop`, { method: 'POST' });
@@ -1047,26 +1314,31 @@
           if (response.ok) {
             addLogEntry('✓ Automação parada com sucesso', 'success');
             setStatus('idle', 'Automação parada');
+            showToast('✓ Automação parada!', 'success');
             metrics.proxies = 0;
-            updateMetrics();
+            updateMetrics(metrics.views, metrics.minutes);
           } else {
             addLogEntry('✗ Erro ao parar automação', 'error');
             setStatus('error', 'Erro ao parar');
+            showToast('✗ Erro ao parar automação', 'error');
           }
         } catch (error) {
           addLogEntry(`✗ Erro de conexão: ${error.message}`, 'error');
           setStatus('error', 'Erro de conexão');
+          showToast(`✗ Erro de conexão: ${error.message}`, 'error');
         }
       });
 
       collectBtn.addEventListener('click', async () => {
         if (!niche.value || !location.value) {
           addLogEntry('⚠ Preencha Segmento e Cidade/Região para coletar leads', 'warning');
+          showToast('⚠ Preencha todos os campos obrigatórios', 'warning');
           return;
         }
 
         collectBtn.disabled = true;
         addLogEntry(`Iniciando coleta de leads para: ${niche.value} em ${location.value}`, 'info');
+        showToast(`🔍 Coletando leads para ${niche.value}...`, 'info', 2000);
 
         const payload = { niche: niche.value, location: location.value };
 
@@ -1084,14 +1356,18 @@
                 addLeadToTable(lead.company, lead.segment, lead.phone, lead.email);
               });
               addLogEntry(`✓ ${result.leads.length} leads coletados com sucesso`, 'success');
+              showToast(`✓ ${result.leads.length} leads coletados!`, 'success');
             } else {
               addLogEntry('✓ Coleta concluída', 'success');
+              showToast('✓ Coleta concluída', 'success');
             }
           } else {
             addLogEntry('✗ Erro ao coletar leads', 'error');
+            showToast('✗ Erro ao coletar leads', 'error');
           }
         } catch (error) {
           addLogEntry(`✗ Erro de conexão: ${error.message}`, 'error');
+          showToast(`✗ Erro de conexão`, 'error');
         } finally {
           collectBtn.disabled = false;
         }
@@ -1100,12 +1376,14 @@
       clearLogsBtn.addEventListener('click', () => {
         activityMonitor.innerHTML = '<div class="terminal-line info"><i class="fas fa-trash"></i> Histórico limpo</div>';
         addLogEntry('Histórico de atividades limpo com sucesso', 'success');
+        showToast('🗑 Histórico limpo', 'success', 2000);
       });
 
       window.addEventListener('load', () => {
         addLogEntry('Dashboard carregado e pronto para uso', 'success');
         setStatus('idle', 'Aguardando comandos');
-        updateMetrics();
+        updateMetrics(metrics.views, metrics.minutes);
+        showToast('✓ Dashboard pronto!', 'success', 2500);
       });
 
       // Simular atualização de métricas a cada 10 segundos
@@ -1115,9 +1393,15 @@
           if (response.ok) {
             const data = await response.json();
             if (data.status === 'running') {
-              metrics.views += Math.floor(Math.random() * 50);
-              metrics.minutes += Math.floor(Math.random() * 10);
-              updateMetrics();
+              const newViews = metrics.views + Math.floor(Math.random() * 50);
+              const newMinutes = metrics.minutes + Math.floor(Math.random() * 10);
+              updateMetrics(newViews, newMinutes);
+              
+              // Notificação aleatória de proxy
+              if (Math.random() > 0.7) {
+                showToast('🔄 Proxy trocado com sucesso', 'info', 2500);
+                addLogEntry('✓ Proxy foi trocado automaticamente', 'success');
+              }
             }
           }
         } catch (error) {
