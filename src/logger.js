@@ -12,21 +12,23 @@ function ensureLogDir() {
 function writeLog(level, message) {
   const timestamp = new Date().toISOString();
   ensureLogDir();
-  const logLine = `[${timestamp}] [${level.toUpperCase()}] ${message}\n`;
+  const logLine = `[${timestamp}] [${level.toUpperCase().padEnd(5)}] ${message}\n`;
   fs.appendFileSync(path.join(LOG_DIR, "automation.log"), logLine, { encoding: "utf8" });
 }
 
-function logger(level) {
+function createLogger(level) {
   return (...messages) => {
     const text = messages.join(" ");
-    console.log(`[${level.toUpperCase()}] ${text}`);
+    const prefix = `[${level.toUpperCase().padEnd(5)}]`;
+    console.log(`${prefix} ${text}`);
     writeLog(level, text);
   };
 }
 
 module.exports = {
-  info: logger("info"),
-  warn: logger("warn"),
-  error: logger("error"),
-  debug: logger("debug"),
+  info: createLogger("info"),
+  warn: createLogger("warn"),
+  error: createLogger("error"),
+  debug: createLogger("debug"),
+  success: createLogger("success"),
 };

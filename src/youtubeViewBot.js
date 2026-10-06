@@ -77,16 +77,14 @@ class YouTubeViewBot {
   async applyStealth() {
     if (!this.stealth) return;
 
-    logger.debug("🛡️ Applying stealth measures...");
+    logger.debug("Applying stealth measures...");
 
     await this.page.addInitScript(`
-      // Remove webdriver flag
       Object.defineProperty(navigator, 'webdriver', {
         get: () => undefined,
         configurable: true
       });
 
-      // Mask plugins
       Object.defineProperty(navigator, 'plugins', {
         get: () => [
           { name: 'Chrome PDF Plugin', description: 'Portable Document Format', filename: 'internal-pdf-viewer' },
@@ -95,7 +93,6 @@ class YouTubeViewBot {
         configurable: true
       });
 
-      // Mask language
       Object.defineProperty(navigator, 'languages', {
         get: () => ['en-US', 'en'],
         configurable: true
@@ -106,7 +103,6 @@ class YouTubeViewBot {
         configurable: true
       });
 
-      // Mask screen resolution
       Object.defineProperty(screen, 'width', { get: () => 1920, configurable: true });
       Object.defineProperty(screen, 'height', { get: () => 1080, configurable: true });
       Object.defineProperty(screen, 'availWidth', { get: () => 1920, configurable: true });
@@ -114,7 +110,6 @@ class YouTubeViewBot {
       Object.defineProperty(screen, 'colorDepth', { get: () => 24, configurable: true });
       Object.defineProperty(screen, 'pixelDepth', { get: () => 24, configurable: true });
 
-      // Mask WebGL
       try {
         const getParameter = WebGLRenderingContext.prototype.getParameter;
         WebGLRenderingContext.prototype.getParameter = function(parameter) {
@@ -122,9 +117,8 @@ class YouTubeViewBot {
           if (parameter === 37446) return 'Intel Iris OpenGL Engine';
           return getParameter.call(this, parameter);
         };
-      } catch(e) {}
+      } catch (e) {}
 
-      // Inject Chrome runtime
       window.chrome = {
         runtime: {
           connect: () => ({}),
@@ -132,18 +126,16 @@ class YouTubeViewBot {
         }
       };
 
-      // Hide headless
       Object.defineProperty(navigator, 'headless', {
         get: () => false,
         configurable: true
       });
 
-      // Block detection tools
       const originalFetch = window.fetch;
       window.fetch = function(...args) {
         const url = args[0]?.toString?.() || '';
         const blocked = ['detectbot', 'anti-bot', 'fingerprint', 'bot-detection', 'captcha-check'];
-        if (blocked.some(p => url.toLowerCase().includes(p))) {
+        if (blocked.some((p) => url.toLowerCase().includes(p))) {
           return Promise.reject(new Error('Blocked'));
         }
         return originalFetch.apply(this, args);
@@ -156,7 +148,6 @@ class YouTubeViewBot {
       });
     `);
 
-    // Route requests and block detection tools
     await this.page.route("**/*", (route) => {
       const url = route.request().url().toLowerCase();
       const blocked = [
@@ -170,18 +161,18 @@ class YouTubeViewBot {
       ];
 
       if (blocked.some((p) => url.includes(p))) {
-        logger.debug(`🚫 Blocked detection request: ${url}`);
+        logger.debug(`Blocked detection request: ${url}`);
         route.abort();
       } else {
         route.continue();
       }
     });
 
-    logger.debug("✅ Stealth measures applied");
+    logger.debug("Stealth measures applied");
   }
 
   async launch() {
-    logger.info("🚀 Launching browser with stealth mode...");
+    logger.info("Launching browser with stealth mode...");
 
     const launchArgs = [
       "--disable-blink-features=AutomationControlled",
@@ -207,51 +198,37 @@ class YouTubeViewBot {
       args: launchArgs,
     });
 
-    logger.debug("✓ Browser launched");
-
     this.context = await this.browser.newContext({
       userAgent: this.userAgent,
       viewport: { width: 1920, height: 1080 },
       locale: this.locale,
       timezoneId: this.timezone,
       ignoreHTTPSErrors: true,
-      javaScriptEnabled: true
+      javaScriptEnabled: true,
+      proxy: this.proxy ? { server: this.proxy } : undefined,
     });
 
-    logger.debug("✓ Context created");
-
     this.page = await this.context.newPage();
-    logger.debug("✓ Page created");
-
     await this.applyStealth();
   }
 
   async navigateToYoutube() {
-    logger.info(`📺 Opening ${this.youtubeUrl}`);
+    logger.info(`Opening ${this.youtubeUrl}`);
 
     await this.page.goto(this.youtubeUrl, {
       waitUntil: "domcontentloaded",
       timeout: 60000,
     });
 
-    logger.debug("✓ Page loaded");
-
-    await this.page.waitForLoadState("networkidle").catch(() => {
-      logger.warn("⚠️ Network idle timeout, continuing...");
-    });
-
     await sleep(randomBetween(2000, 5000));
-    logger.debug("Simulating initial page exploration...");
     await organicScroll(this.page, randomBetween(200, 400), randomBetween(2, 4));
-    await sleep(randomBetween(1500, 3000));
   }
 
   async searchAndOpenVideo() {
-    logger.info(`🔍 Searching for: "${this.searchQuery}"`);
+    logger.info(`Searching for: "${this.searchQuery}"`);
 
     const searchInput = this.page.locator('input[name="search_query"], input#search').first();
     await searchInput.waitFor({ state: "visible", timeout: 20000 });
-    logger.debug("✓ Search input found");
 
     const box = await searchInput.boundingBox();
     if (box) {
@@ -262,38 +239,25 @@ class YouTubeViewBot {
     await searchInput.click();
     await sleep(randomBetween(200, 500));
 
-    logger.debug("Typing search query...");
     for (const character of this.searchQuery) {
       await this.page.keyboard.type(character);
       await sleep(randomBetween(50, 150));
     }
 
-    await sleep(randomBetween(800, 1500));
-    logger.debug("Submitting search...");
     await this.page.keyboard.press("Enter");
-
-    await this.page.waitForLoadState("networkidle").catch(() => {
-      logger.warn("⚠️ Search results network idle timeout");
-    });
     await sleep(randomBetween(2000, 4000));
-
-    logger.debug("✓ Search completed");
+    await organicScroll(this.page, randomBetween(250, 500), 2);
   }
 
   async selectVideo() {
-    logger.info("👀 Browsing search results and selecting video...");
-
-    await organicScroll(this.page, randomBetween(300, 600), randomBetween(2, 3));
-    await sleep(randomBetween(1000, 2000));
+    logger.info("Selecting video from search results...");
 
     const videoLink = this.page.locator("ytd-video-renderer a#thumbnail").first();
     if ((await videoLink.count()) > 0) {
       const box = await videoLink.boundingBox();
       if (box) {
         await humanMouseMove(this.page, box.x + box.width / 2, box.y + box.height / 2, 4);
-        await sleep(randomBetween(500, 1200));
       }
-      logger.info("🎬 Clicking on video...");
       await videoLink.click();
       await sleep(randomBetween(2000, 4000));
       return;
@@ -320,7 +284,7 @@ class YouTubeViewBot {
       ? randomBetween(this.minWatchSeconds, this.maxWatchSeconds)
       : this.minWatchSeconds;
 
-    logger.info(`⏱️ Starting watch simulation. Targeted time: ${duration} seconds.`);
+    logger.info(`Starting watch simulation. Targeted time: ${duration} seconds.`);
 
     const startTime = Date.now();
     let lastScrollTime = Date.now();
@@ -328,38 +292,34 @@ class YouTubeViewBot {
     while ((Date.now() - startTime) / 1000 < duration) {
       await sleep(randomBetween(1000, 3000));
 
-      // Simula interações orgânicas de tempos em tempos enquanto assiste
       const currentTime = Date.now();
       if (currentTime - lastScrollTime > randomBetween(15000, 30000)) {
         logger.debug("Simulating reader attention shift (organic scroll/mouse movement)...");
-        
-        // Pequena rolagem para simular leitura de comentários ou recomendações
+
         await organicScroll(this.page, randomBetween(100, 250), 2);
-        
-        // Move o mouse aleatoriamente pela tela do player
+
         const viewport = this.page.viewportSize();
         if (viewport) {
           await humanMouseMove(
-            this.page, 
-            randomBetween(100, viewport.width - 100), 
-            randomBetween(100, viewport.height - 100), 
+            this.page,
+            randomBetween(100, viewport.width - 100),
+            randomBetween(100, viewport.height - 100),
             6
           );
         }
-        
+
         lastScrollTime = currentTime;
       }
     }
 
-    logger.info(`✅ Finished watch session successfully. Total time: ${Math.round((Date.now() - startTime) / 1000)} seconds.`);
+    logger.info(`Finished watch session successfully. Total time: ${Math.round((Date.now() - startTime) / 1000)} seconds.`);
   }
 
   async close() {
-    logger.info("🔒 Closing bot session and cleaning up browser processes...");
+    logger.info("Closing bot session and cleaning up browser processes...");
     if (this.page) await this.page.close().catch(() => {});
     if (this.context) await this.context.close().catch(() => {});
     if (this.browser) await this.browser.close().catch(() => {});
-    logger.debug("✓ Browser closed and resources cleaned");
   }
 
   async execute() {
@@ -370,7 +330,7 @@ class YouTubeViewBot {
       await this.selectVideo();
       await this.watchVideo();
     } catch (err) {
-      logger.error(`❌ Automation failed during execution cycle: ${err.message}`);
+      logger.error(`Automation failed during execution cycle: ${err.message}`);
       throw err;
     } finally {
       await this.close();

@@ -1,16 +1,21 @@
 {
   "name": "youtube-gold",
-  "version": "1.1.0",
-  "description": "Advanced YouTube automation tool for testing and research scenarios",
+  "version": "2.1.0",
+  "description": "Advanced YouTube automation with stealth mode, batch execution and web control panel",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
+    "server": "node src/server.js",
     "dev": "node src/index.js --query \"lofi hip hop radio\" --min 15 --max 45 --sessions 1",
     "multi": "node src/index.js --query \"python tutorial\" --min 20 --max 60 --sessions 3",
-    "test": "node -e \"console.log('No tests configured yet')\""
+    "stealth": "node src/index.js --query \"music beats\" --stealth true --randomize true",
+    "web": "node src/server.js",
+    "test": "node -e \"console.log('Web panel ready')\""
   },
   "dependencies": {
     "dotenv": "^16.4.0",
+    "express": "^4.19.2",
+    "express-basic-auth": "^1.2.0",
     "playwright": "^1.49.1"
   }
 }

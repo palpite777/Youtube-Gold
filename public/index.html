@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Gold Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+      body {
+        background: linear-gradient(135deg, #0f172a 0%, #111827 40%, #1e293b 100%);
+        color: #e2e8f0;
+      }
+
+      .card {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 18px;
+        backdrop-filter: blur(12px);
+      }
+
+      .btn-primary {
+        background: linear-gradient(90deg, #2563eb, #7c3aed);
+        border: none;
+      }
+
+      .btn-danger {
+        background: linear-gradient(90deg, #dc2626, #ef4444);
+        border: none;
+      }
+
+      textarea {
+        min-height: 180px;
+        resize: vertical;
+      }
+
+      .status-box {
+        background: rgba(15, 118, 110, 0.12);
+        border: 1px solid rgba(45, 212, 191, 0.25);
+        border-radius: 12px;
+        padding: 18px;
+        font-weight: 500;
+      }
+
+      .badge {
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card shadow-lg p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h2 class="mb-1">YouTube Gold</h2>
+                <p class="text-secondary mb-0">Web control panel</p>
+              </div>
+              <span id="statusBadge" class="badge bg-secondary rounded-pill px-3 py-2">Idle</span>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-8">
+                <label for="searchQuery" class="form-label">Search term</label>
+                <input id="searchQuery" class="form-control" value="lofi hip hop radio" />
+              </div>
+
+              <div class="col-md-4">
+                <label for="sessionCount" class="form-label">Sessions</label>
+                <input id="sessionCount" type="number" min="1" max="20" class="form-control" value="1" />
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <label for="proxyInput" class="form-label">Proxies (one per line)</label>
+              <textarea id="proxyInput" class="form-control" placeholder="http://proxy:port
+socks5://proxy:port"></textarea>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+              <button id="startBtn" class="btn btn-primary btn-lg flex-fill">Iniciar</button>
+              <button id="stopBtn" class="btn btn-danger btn-lg flex-fill">Parar</button>
+            </div>
+
+            <div class="status-box mt-4">
+              <div class="small text-uppercase text-muted mb-2">Current status</div>
+              <div id="statusText">Waiting for start.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const statusBadge = document.getElementById("statusBadge");
+      const statusText = document.getElementById("statusText");
+      const startBtn = document.getElementById("startBtn");
+      const stopBtn = document.getElementById("stopBtn");
+      const searchQuery = document.getElementById("searchQuery");
+      const sessionCount = document.getElementById("sessionCount");
+      const proxyInput = document.getElementById("proxyInput");
+
+      function setStatus(state, text) {
+        const map = {
+          idle: ["bg-secondary", "Idle"],
+          starting: ["bg-warning", "Starting"],
+          running: ["bg-success", "Running"],
+          completed: ["bg-info", "Completed"],
+          stopped: ["bg-dark", "Stopped"],
+          error: ["bg-danger", "Error"],
+        };
+
+        const [badgeClass, badgeText] = map[state] || map.idle;
+        statusBadge.className = `badge ${badgeClass} rounded-pill px-3 py-2`;
+        statusBadge.textContent = badgeText;
+        statusText.textContent = text;
+      }
+
+      async function fetchStatus() {
+        try {
+          const response = await fetch("/api/status");
+          const data = await response.json();
+          setStatus(data.status || "idle", data.output || "Waiting for start.");
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      startBtn.addEventListener("click", async () => {
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+
+        try {
+          setStatus("starting", "Starting automation...");
+
+          const payload = {
+            searchQuery: searchQuery.value,
+            sessionCount: Number(sessionCount.value || 1),
+            proxies: proxyInput.value,
+          };
+
+          const response = await fetch("/api/start", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const result = await response.json();
+          if (!result.ok) {
+            setStatus("error", result.message || "Failed to start");
+            return;
+          }
+
+          setStatus("running", "Automation started successfully.");
+        } catch (error) {
+          setStatus("error", error.message || "Request failed");
+        } finally {
+          setBtnState();
+        }
+      });
+
+      stopBtn.addEventListener("click", async () => {
+        try {
+          setStatus("stopped", "Stopping automation...");
+          const response = await fetch("/api/stop", { method: "POST" });
+          const result = await response.json();
+          if (result.ok) {
+            setStatus("stopped", result.message || "Automation stopped.");
+          }
+        } catch (error) {
+          setStatus("error", error.message || "Could not stop automation");
+        }
+      });
+
+      function setBtnState() {
+        startBtn.disabled = false;
+        stopBtn.disabled = false;
+      }
+
+      setInterval(fetchStatus, 1500);
+      fetchStatus();
+    </script>
+  </body>
+</html>
