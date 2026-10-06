@@ -1,185 +1,818 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YouTube Gold Panel</title>
+    <title>YouTube Gold - Painel Premium</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
       body {
-        background: linear-gradient(135deg, #0f172a 0%, #111827 40%, #1e293b 100%);
+        background: linear-gradient(135deg, #0a0e27 0%, #0f1629 40%, #1a1f3a 100%);
         color: #e2e8f0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .main-container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header-section {
+        text-align: center;
+        margin-bottom: 40px;
+        background: rgba(15, 23, 42, 0.6);
+        padding: 30px;
+        border-radius: 20px;
+        border: 1px solid rgba(148, 163, 184, 0.1);
+      }
+
+      .header-section h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(90deg, #a855f7, #7c3aed);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+      }
+
+      .header-section p {
+        color: #94a3b8;
+        font-size: 1.1rem;
       }
 
       .card {
-        background: rgba(15, 23, 42, 0.8);
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(148, 163, 184, 0.15);
+        border-radius: 16px;
+        backdrop-filter: blur(15px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+      }
+
+      .nav-tabs {
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        gap: 10px;
+      }
+
+      .nav-tabs .nav-link {
+        color: #94a3b8;
+        border: none;
+        border-bottom: 3px solid transparent;
+        border-radius: 12px 12px 0 0;
+        padding: 15px 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .nav-tabs .nav-link:hover {
+        color: #e2e8f0;
+        background: rgba(168, 85, 247, 0.1);
+      }
+
+      .nav-tabs .nav-link.active {
+        color: #a855f7;
+        border-bottom-color: #a855f7;
+        background: rgba(168, 85, 247, 0.1);
+      }
+
+      .form-label {
+        color: #cbd5e1;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .form-control, .form-select {
+        background: rgba(30, 41, 59, 0.8);
         border: 1px solid rgba(148, 163, 184, 0.2);
-        border-radius: 18px;
-        backdrop-filter: blur(12px);
+        color: #e2e8f0;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
       }
 
-      .btn-primary {
-        background: linear-gradient(90deg, #2563eb, #7c3aed);
+      .form-control:focus, .form-select:focus {
+        background: rgba(30, 41, 59, 1);
+        border-color: #a855f7;
+        color: #e2e8f0;
+        box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+      }
+
+      .form-control::placeholder {
+        color: #64748b;
+      }
+
+      .btn {
+        font-weight: 700;
+        padding: 12px 24px;
+        border-radius: 10px;
         border: none;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
-      .btn-danger {
+      .btn-start {
+        background: linear-gradient(90deg, #a855f7, #7c3aed);
+        color: white;
+        flex: 1;
+      }
+
+      .btn-start:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);
+      }
+
+      .btn-start:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .btn-stop {
         background: linear-gradient(90deg, #dc2626, #ef4444);
-        border: none;
+        color: white;
+        flex: 1;
       }
 
-      textarea {
-        min-height: 180px;
-        resize: vertical;
+      .btn-stop:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
       }
 
-      .status-box {
-        background: rgba(15, 118, 110, 0.12);
-        border: 1px solid rgba(45, 212, 191, 0.25);
-        border-radius: 12px;
-        padding: 18px;
-        font-weight: 500;
+      .btn-stop:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .btn-collect {
+        background: linear-gradient(90deg, #22c55e, #16a34a);
+        color: white;
+      }
+
+      .btn-collect:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+      }
+
+      .btn-clear {
+        background: rgba(107, 114, 128, 0.3);
+        border: 1px solid rgba(107, 114, 128, 0.5);
+        color: #cbd5e1;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+
+      .btn-clear:hover {
+        background: rgba(107, 114, 128, 0.5);
+      }
+
+      .input-group {
+        gap: 10px;
+      }
+
+      .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .table {
+        color: #cbd5e1;
+        margin-bottom: 0;
+      }
+
+      .table thead th {
+        background: rgba(30, 41, 59, 0.9);
+        color: #a855f7;
+        border-color: rgba(148, 163, 184, 0.1);
+        font-weight: 700;
+        padding: 15px;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+      }
+
+      .table tbody td {
+        padding: 15px;
+        border-color: rgba(148, 163, 184, 0.1);
+        vertical-align: middle;
+      }
+
+      .table tbody tr:hover {
+        background: rgba(168, 85, 247, 0.1);
+      }
+
+      .terminal-monitor {
+        background: #0a0e27;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+        border-radius: 10px;
+        padding: 20px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.95rem;
+        min-height: 250px;
+        max-height: 400px;
+        overflow-y: auto;
+        color: #22c55e;
+        line-height: 1.6;
+        box-shadow: inset 0 0 20px rgba(34, 197, 94, 0.05);
+      }
+
+      .terminal-monitor::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .terminal-monitor::-webkit-scrollbar-track {
+        background: rgba(30, 41, 59, 0.5);
+        border-radius: 10px;
+      }
+
+      .terminal-monitor::-webkit-scrollbar-thumb {
+        background: rgba(168, 85, 247, 0.5);
+        border-radius: 10px;
+      }
+
+      .terminal-monitor::-webkit-scrollbar-thumb:hover {
+        background: rgba(168, 85, 247, 0.7);
+      }
+
+      .terminal-line {
+        margin-bottom: 8px;
+      }
+
+      .terminal-line.error {
+        color: #ef4444;
+      }
+
+      .terminal-line.success {
+        color: #22c55e;
+      }
+
+      .terminal-line.warning {
+        color: #f59e0b;
+      }
+
+      .terminal-line.info {
+        color: #3b82f6;
+      }
+
+      .monitor-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      }
+
+      .monitor-header h5 {
+        color: #22c55e;
+        margin: 0;
+        font-weight: 700;
+      }
+
+      .row-with-gap {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .form-group-compact {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .status-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+        animation: pulse 2s infinite;
+      }
+
+      .status-indicator.idle {
+        background-color: #64748b;
+      }
+
+      .status-indicator.running {
+        background-color: #22c55e;
+      }
+
+      .status-indicator.error {
+        background-color: #ef4444;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .tab-pane {
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #94a3b8;
+      }
+
+      .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.5;
       }
 
       .badge {
-        font-size: 0.9rem;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+
+      .badge-success {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+      }
+
+      .badge-danger {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+      }
+
+      .badge-warning {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+      }
+
+      .badge-info {
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
       }
     </style>
   </head>
   <body>
-    <div class="container py-5">
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="card shadow-lg p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="main-container">
+      <!-- Header -->
+      <div class="header-section">
+        <h1>
+          <i class="fas fa-video"></i> YouTube Gold
+        </h1>
+        <p>Painel Premium de Automação e Coleta de Leads</p>
+      </div>
+
+      <!-- Main Card -->
+      <div class="card p-4">
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link active"
+              id="automation-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#automation"
+              type="button"
+              role="tab"
+              aria-controls="automation"
+              aria-selected="true"
+            >
+              <i class="fas fa-tv"></i> Automação de Vídeo
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="leads-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#leads"
+              type="button"
+              role="tab"
+              aria-controls="leads"
+              aria-selected="false"
+            >
+              <i class="fas fa-chart-bar"></i> Coletor de Leads
+            </button>
+          </li>
+        </ul>
+
+        <!-- Tabs Content -->
+        <div class="tab-content mt-4" id="mainTabsContent">
+          <!-- Tab 1: Video Automation -->
+          <div class="tab-pane fade show active" id="automation" role="tabpanel" aria-labelledby="automation-tab">
+            <div class="row-with-gap">
+              <div class="form-group-compact">
+                <label for="searchQuery" class="form-label">
+                  <i class="fas fa-search"></i> Termo de Busca
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="searchQuery"
+                  placeholder="Ex: lofi hip hop radio"
+                  value="lofi hip hop radio"
+                />
+              </div>
+
+              <div class="form-group-compact">
+                <label for="channelName" class="form-label">
+                  <i class="fas fa-user-circle"></i> Nome do Canal
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="channelName"
+                  placeholder="Ex: Seu Canal"
+                  value="YouTube Gold"
+                />
+              </div>
+
+              <div class="form-group-compact">
+                <label for="sessionCount" class="form-label">
+                  <i class="fas fa-layer-group"></i> Sessões
+                </label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="sessionCount"
+                  min="1"
+                  max="50"
+                  value="1"
+                />
+              </div>
+            </div>
+
+            <div class="row-with-gap">
+              <div class="form-group-compact">
+                <label for="operationMode" class="form-label">
+                  <i class="fas fa-cog"></i> Modo de Operação
+                </label>
+                <select class="form-select" id="operationMode">
+                  <option value="view">Apenas Visualização</option>
+                  <option value="subscribe">Inscrição + Like</option>
+                </select>
+              </div>
+
+              <div class="form-group-compact">
+                <label for="invisibleMode" class="form-label">
+                  <i class="fas fa-eye-slash"></i> Modo Invisível
+                </label>
+                <select class="form-select" id="invisibleMode">
+                  <option value="no">Não</option>
+                  <option value="yes">Sim</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="button-group">
+              <button id="startBtn" class="btn btn-start">
+                <i class="fas fa-rocket"></i> Iniciar Automação
+              </button>
+              <button id="stopBtn" class="btn btn-stop">
+                <i class="fas fa-stop-circle"></i> Parar Tudo
+              </button>
+            </div>
+
+            <div class="card p-3" style="background: rgba(30, 41, 59, 0.5); border-color: rgba(148, 163, 184, 0.1);">
+              <small class="text-muted d-block mb-2">STATUS DA AUTOMAÇÃO</small>
               <div>
-                <h2 class="mb-1">YouTube Gold</h2>
-                <p class="text-secondary mb-0">Web control panel</p>
+                <span class="status-indicator idle" id="statusIndicator"></span>
+                <span id="statusText" class="text-muted">Aguardando início...</span>
               </div>
-              <span id="statusBadge" class="badge bg-secondary rounded-pill px-3 py-2">Idle</span>
-            </div>
-
-            <div class="row g-3">
-              <div class="col-md-8">
-                <label for="searchQuery" class="form-label">Search term</label>
-                <input id="searchQuery" class="form-control" value="lofi hip hop radio" />
-              </div>
-
-              <div class="col-md-4">
-                <label for="sessionCount" class="form-label">Sessions</label>
-                <input id="sessionCount" type="number" min="1" max="20" class="form-control" value="1" />
-              </div>
-            </div>
-
-            <div class="mt-4">
-              <label for="proxyInput" class="form-label">Proxies (one per line)</label>
-              <textarea id="proxyInput" class="form-control" placeholder="http://proxy:port
-socks5://proxy:port"></textarea>
-            </div>
-
-            <div class="mt-4 d-flex gap-2">
-              <button id="startBtn" class="btn btn-primary btn-lg flex-fill">Iniciar</button>
-              <button id="stopBtn" class="btn btn-danger btn-lg flex-fill">Parar</button>
-            </div>
-
-            <div class="status-box mt-4">
-              <div class="small text-uppercase text-muted mb-2">Current status</div>
-              <div id="statusText">Waiting for start.</div>
+              <small id="statusDetails" class="text-secondary d-block mt-2"></small>
             </div>
           </div>
+
+          <!-- Tab 2: Leads Collector -->
+          <div class="tab-pane fade" id="leads" role="tabpanel" aria-labelledby="leads-tab">
+            <div class="row-with-gap">
+              <div class="form-group-compact">
+                <label for="niche" class="form-label">
+                  <i class="fas fa-tag"></i> Segmento / Nicho Comercial
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="niche"
+                  placeholder="Ex: E-commerce, SaaS, Imóveis..."
+                />
+              </div>
+
+              <div class="form-group-compact">
+                <label for="location" class="form-label">
+                  <i class="fas fa-map-marker-alt"></i> Cidade / Região
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="location"
+                  placeholder="Ex: São Paulo, SP"
+                />
+              </div>
+
+              <div class="form-group-compact d-flex align-items-end">
+                <button id="collectBtn" class="btn btn-collect w-100">
+                  <i class="fas fa-search"></i> Coletar
+                </button>
+              </div>
+            </div>
+
+            <!-- Leads Table -->
+            <div class="mt-4">
+              <h6 class="text-light mb-3">
+                <i class="fas fa-table"></i> Leads Coletados
+              </h6>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Nome da Empresa</th>
+                      <th>Segmento</th>
+                      <th>Telefone</th>
+                      <th>E-mail</th>
+                      <th style="width: 80px;">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="leadsTable">
+                    <tr>
+                      <td colspan="5" class="text-center text-muted py-4">
+                        <i class="fas fa-inbox"></i> Nenhum lead coletado ainda
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Activity Monitor -->
+      <div class="card mt-4 p-4">
+        <div class="monitor-header">
+          <h5>
+            <i class="fas fa-terminal"></i> Monitor de Atividade em Tempo Real
+          </h5>
+          <button id="clearLogsBtn" class="btn btn-clear">
+            <i class="fas fa-trash"></i> Limpar Histórico
+          </button>
+        </div>
+        <div class="terminal-monitor" id="activityMonitor">
+          <div class="terminal-line info">
+            <i class="fas fa-info-circle"></i> [SISTEMA] YouTube Gold iniciado com sucesso
+          </div>
+          <div class="terminal-line">Aguardando comandos...</div>
         </div>
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      const statusBadge = document.getElementById("statusBadge");
-      const statusText = document.getElementById("statusText");
-      const startBtn = document.getElementById("startBtn");
-      const stopBtn = document.getElementById("stopBtn");
-      const searchQuery = document.getElementById("searchQuery");
-      const sessionCount = document.getElementById("sessionCount");
-      const proxyInput = document.getElementById("proxyInput");
+      const BASE_URL = 'http://localhost:8080';
 
-      function setStatus(state, text) {
-        const map = {
-          idle: ["bg-secondary", "Idle"],
-          starting: ["bg-warning", "Starting"],
-          running: ["bg-success", "Running"],
-          completed: ["bg-info", "Completed"],
-          stopped: ["bg-dark", "Stopped"],
-          error: ["bg-danger", "Error"],
-        };
+      // DOM Elements
+      const statusIndicator = document.getElementById('statusIndicator');
+      const statusText = document.getElementById('statusText');
+      const statusDetails = document.getElementById('statusDetails');
+      const startBtn = document.getElementById('startBtn');
+      const stopBtn = document.getElementById('stopBtn');
+      const collectBtn = document.getElementById('collectBtn');
+      const clearLogsBtn = document.getElementById('clearLogsBtn');
+      const activityMonitor = document.getElementById('activityMonitor');
+      const leadsTable = document.getElementById('leadsTable');
 
-        const [badgeClass, badgeText] = map[state] || map.idle;
-        statusBadge.className = `badge ${badgeClass} rounded-pill px-3 py-2`;
-        statusBadge.textContent = badgeText;
-        statusText.textContent = text;
+      // Form Elements
+      const searchQuery = document.getElementById('searchQuery');
+      const channelName = document.getElementById('channelName');
+      const sessionCount = document.getElementById('sessionCount');
+      const operationMode = document.getElementById('operationMode');
+      const invisibleMode = document.getElementById('invisibleMode');
+      const niche = document.getElementById('niche');
+      const location = document.getElementById('location');
+
+      // Utility Functions
+      function addLogEntry(message, type = 'info') {
+        const timestamp = new Date().toLocaleTimeString('pt-BR');
+        const line = document.createElement('div');
+        line.className = `terminal-line ${type}`;
+        
+        let icon = '';
+        switch (type) {
+          case 'success':
+            icon = '<i class="fas fa-check-circle"></i>';
+            break;
+          case 'error':
+            icon = '<i class="fas fa-exclamation-circle"></i>';
+            break;
+          case 'warning':
+            icon = '<i class="fas fa-exclamation-triangle"></i>';
+            break;
+          default:
+            icon = '<i class="fas fa-info-circle"></i>';
+        }
+        
+        line.innerHTML = `${icon} [${timestamp}] ${message}`;
+        activityMonitor.appendChild(line);
+        activityMonitor.scrollTop = activityMonitor.scrollHeight;
       }
 
-      async function fetchStatus() {
-        try {
-          const response = await fetch("/api/status");
-          const data = await response.json();
-          setStatus(data.status || "idle", data.output || "Waiting for start.");
-        } catch (error) {
-          console.error(error);
+      function setStatus(state, message) {
+        statusText.textContent = message;
+        statusDetails.textContent = new Date().toLocaleTimeString('pt-BR');
+
+        statusIndicator.classList.remove('idle', 'running', 'error');
+        if (state === 'running') {
+          statusIndicator.classList.add('running');
+        } else if (state === 'error') {
+          statusIndicator.classList.add('error');
+        } else {
+          statusIndicator.classList.add('idle');
         }
       }
 
-      startBtn.addEventListener("click", async () => {
+      function addLeadToTable(company, segment, phone, email) {
+        const emptyRow = leadsTable.querySelector('tr[colspan="5"]');
+        if (emptyRow) {
+          emptyRow.remove();
+        }
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${company}</td>
+          <td><span class="badge badge-info">${segment}</span></td>
+          <td><a href="tel:${phone}" class="text-decoration-none">${phone}</a></td>
+          <td><a href="mailto:${email}" class="text-decoration-none">${email}</a></td>
+          <td>
+            <button class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        `;
+        leadsTable.appendChild(row);
+      }
+
+      // Event Listeners
+      startBtn.addEventListener('click', async () => {
         startBtn.disabled = true;
         stopBtn.disabled = false;
 
+        const payload = {
+          searchQuery: searchQuery.value,
+          channelName: channelName.value,
+          sessionCount: parseInt(sessionCount.value) || 1,
+          operationMode: operationMode.value,
+          invisibleMode: invisibleMode.value === 'yes',
+        };
+
+        addLogEntry(`Iniciando automação com termo: "${payload.searchQuery}"`, 'info');
+        setStatus('running', 'Automação em Execução...');
+
         try {
-          setStatus("starting", "Starting automation...");
-
-          const payload = {
-            searchQuery: searchQuery.value,
-            sessionCount: Number(sessionCount.value || 1),
-            proxies: proxyInput.value,
-          };
-
-          const response = await fetch("/api/start", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+          const response = await fetch(`${BASE_URL}/api/start`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
           });
 
-          const result = await response.json();
-          if (!result.ok) {
-            setStatus("error", result.message || "Failed to start");
-            return;
+          if (response.ok) {
+            const result = await response.json();
+            addLogEntry(`✓ Automação iniciada com sucesso`, 'success');
+            setStatus('running', 'Automação ativa e processando...');
+          } else {
+            addLogEntry(`✗ Erro ao iniciar automação`, 'error');
+            setStatus('error', 'Erro ao iniciar');
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
           }
-
-          setStatus("running", "Automation started successfully.");
         } catch (error) {
-          setStatus("error", error.message || "Request failed");
-        } finally {
-          setBtnState();
+          addLogEntry(`✗ Erro de conexão: ${error.message}`, 'error');
+          setStatus('error', 'Erro de conexão');
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
         }
       });
 
-      stopBtn.addEventListener("click", async () => {
-        try {
-          setStatus("stopped", "Stopping automation...");
-          const response = await fetch("/api/stop", { method: "POST" });
-          const result = await response.json();
-          if (result.ok) {
-            setStatus("stopped", result.message || "Automation stopped.");
-          }
-        } catch (error) {
-          setStatus("error", error.message || "Could not stop automation");
-        }
-      });
-
-      function setBtnState() {
+      stopBtn.addEventListener('click', async () => {
+        stopBtn.disabled = true;
         startBtn.disabled = false;
-        stopBtn.disabled = false;
-      }
 
-      setInterval(fetchStatus, 1500);
-      fetchStatus();
+        addLogEntry('Parando automação...', 'warning');
+        setStatus('idle', 'Parando...');
+
+        try {
+          const response = await fetch(`${BASE_URL}/api/stop`, { method: 'POST' });
+
+          if (response.ok) {
+            addLogEntry('✓ Automação parada com sucesso', 'success');
+            setStatus('idle', 'Automação parada');
+          } else {
+            addLogEntry('✗ Erro ao parar automação', 'error');
+            setStatus('error', 'Erro ao parar');
+          }
+        } catch (error) {
+          addLogEntry(`✗ Erro de conexão: ${error.message}`, 'error');
+          setStatus('error', 'Erro de conexão');
+        }
+      });
+
+      collectBtn.addEventListener('click', async () => {
+        if (!niche.value || !location.value) {
+          addLogEntry('⚠ Preencha Segmento e Cidade/Região para coletar leads', 'warning');
+          return;
+        }
+
+        collectBtn.disabled = true;
+        addLogEntry(`Iniciando coleta de leads para: ${niche.value} em ${location.value}`, 'info');
+
+        const payload = {
+          niche: niche.value,
+          location: location.value,
+        };
+
+        try {
+          const response = await fetch(`${BASE_URL}/api/collect-leads`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            if (result.leads && Array.isArray(result.leads)) {
+              result.leads.forEach(lead => {
+                addLeadToTable(lead.company, lead.segment, lead.phone, lead.email);
+              });
+              addLogEntry(`✓ ${result.leads.length} leads coletados com sucesso`, 'success');
+            } else {
+              addLogEntry('✓ Coleta concluída', 'success');
+            }
+          } else {
+            addLogEntry('✗ Erro ao coletar leads', 'error');
+          }
+        } catch (error) {
+          addLogEntry(`✗ Erro de conexão: ${error.message}`, 'error');
+        } finally {
+          collectBtn.disabled = false;
+        }
+      });
+
+      clearLogsBtn.addEventListener('click', () => {
+        activityMonitor.innerHTML = '<div class="terminal-line info"><i class="fas fa-trash"></i> Histórico limpo</div>';
+        addLogEntry('Histórico de atividades limpo com sucesso', 'success');
+      });
+
+      // Initialize
+      window.addEventListener('load', () => {
+        addLogEntry('Dashboard carregado e pronto para uso', 'success');
+        setStatus('idle', 'Aguardando comandos');
+      });
+
+      // Auto-refresh status every 5 seconds
+      setInterval(async () => {
+        try {
+          const response = await fetch(`${BASE_URL}/api/status`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.status === 'running') {
+              statusIndicator.classList.remove('idle', 'error');
+              statusIndicator.classList.add('running');
+            }
+          }
+        } catch (error) {
+          // Silent fail - connection not available
+        }
+      }, 5000);
     </script>
   </body>
 </html>
