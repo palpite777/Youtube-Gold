@@ -4,45 +4,58 @@ const path = require("path");
 const fs = require("fs");
 const { config } = require("./config");
 const logger = require("./logger");
-const { runBatch, loadProxies, parseArgs } = require("./index");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-const WEB_USER = process.env.WEB_USER || config.webUser;
-const WEB_PASSWORD = process.env.WEB_PASSWORD || config.webPassword;
+const WEB_USER = process.env.WEB_USER || config.webUser || "admin";
+const WEB_PASSWORD = process.env.WEB_PASSWORD || config.webPassword || "admin123";
 
 let automationState = {
   running: false,
   status: "idle",
-  output: "",
+  output: "Waiting for start.",
+  logs: [],
 };
 
-const isAuthorized = basicAuth({
-  users: {
-    [WEB_USER]: WEB_PASSWORD,
-  },
-  challenge: true,
-  unauthorizedResponse: "Unauthorized access",
-});
+const logFilePath = path.join(process.cwd(), "logs", "automation.log");
 
-app.use(basicAuth({
-  users: {
-    [WEB_USER]: WEB_PASSWORD,
-  },
-  challenge: true,
-  unauthorizedResponse: "Unauthorized access",
-}));
+function ensureLogDir() {
+  const dir = path.join(process.cwd(), "logs");
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+}
+
+function readLogTail(limit = 80) {
+  ensureLogDir();
+  if (!fs.existsSync(logFilePath)) return [];
+
+  const content = fs.readFileSync(logFilePath, "utf8");
+  const lines = content.split(/\r?\n/).filter(Boolean);
+  return lines.slice(-limit);
+}
+
+function updateLogs() {
+  automationState.logs = readLogTail(80);
+}
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
 
+app.use(
+  basicAuth({
+    users: { [WEB_USER]: WEB_PASSWORD },
+    challenge: true,
+    unauthorizedResponse: "Unauthorized access",
+  })
+);
+
 app.get("/api/status", (req, res) => {
+  updateLogs();
   res.json({
     running: automationState.running,
     status: automationState.status,
     output: automationState.output,
+    logs: automationState.logs,
   });
 });
 
@@ -64,56 +77,52 @@ app.post("/api/start", async (req, res) => {
 
     fs.writeFileSync(path.join(process.cwd(), "proxies.txt"), proxyList.join("\n"), "utf8");
     logger.info(`Saved ${proxyList.length} proxies from web panel`);
-  } else {
-    if (fs.existsSync(path.join(process.cwd(), "proxies.txt"))) {
-      fs.unlinkSync(path.join(process.cwd(), "proxies.txt"));
-    }
+  } else if (fs.existsSync(path.join(process.cwd(), "proxies.txt"))) {
+    fs.unlinkSync(path.join(process.cwd(), "proxies.txt"));
   }
 
   automationState.running = true;
   automationState.status = "starting";
-  automationState.output = "Initializing...";
+  automationState.output = `Initializing automation for: ${searchQuery}`;
+  updateLogs();
 
-  try {
-    const task = async () => {
-      try {
-        automationState.status = "running";
-        automationState.output = `Starting automation with query: ${searchQuery}`;
+  (async () => {
+    try {
+      const { runBatch } = require("./index");
 
-        await runBatch({
-          searchQuery,
-          sessionCount,
-          headless: false,
-          stealth: true,
-          randomize: true,
-        });
+      automationState.status = "running";
+      automationState.output = `Running ${sessionCount} session(s) for: ${searchQuery}`;
+      updateLogs();
 
-        automationState.status = "completed";
-        automationState.output = "Automation finished successfully.";
-      } catch (error) {
-        automationState.status = "error";
-        automationState.output = error.message;
-        logger.error(error.message);
-      } finally {
-        automationState.running = false;
-      }
-    };
+      await runBatch({
+        searchQuery,
+        sessionCount,
+        headless: false,
+        stealth: true,
+        randomize: true,
+      });
 
-    task();
+      automationState.status = "completed";
+      automationState.output = "Automation finished successfully.";
+    } catch (error) {
+      automationState.status = "error";
+      automationState.output = error.message;
+      logger.error(error.message);
+    } finally {
+      automationState.running = false;
+      updateLogs();
+    }
+  })();
 
-    return res.json({ ok: true, message: "Automation started" });
-  } catch (error) {
-    automationState.running = false;
-    automationState.status = "error";
-    automationState.output = error.message;
-    return res.json({ ok: false, message: error.message });
-  }
+  return res.json({ ok: true, message: "Automation started successfully." });
 });
 
 app.post("/api/stop", (req, res) => {
   automationState.running = false;
   automationState.status = "stopped";
-  automationState.output = "Automation was stopped by the user.";
+  automationState.output = "Automation stopped by user.";
+  updateLogs();
+
   res.json({ ok: true, message: "Stop signal sent" });
 });
 
@@ -123,5 +132,10 @@ app.get("*", (req, res) => {
 
 app.listen(PORT, () => {
   logger.info(`Web panel started at http://localhost:${PORT}`);
-  logger.info(`Login: ${WEB_USER} / ${WEB_PASSWORD}`);
+  logger.info(`Login: ${WEB_USER}/${WEB_PASSWORD}`);
+  updateLogs();
+  console.log(`Web panel started at http://localhost:${PORT}`);
+  console.log(`Login: ${WEB_USER}/${WEB_PASSWORD}`);
 });
+
+module.exports = { app, automationState };
