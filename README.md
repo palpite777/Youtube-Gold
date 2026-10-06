@@ -1,16 +1,22 @@
 # Youtube-Gold
 
-Automated browser tool for opening YouTube, searching for a video, and simulating a viewing session.
+Advanced browser automation tool for opening YouTube, searching for a video, and simulating a watch session using Playwright.
 
-This project is designed as a configurable Playwright automation script with a cleaner project structure and environment-based settings.
+This version is a more robust and modular iteration of the original idea, with:
+- environment-based configuration,
+- multi-session execution,
+- randomized watch times,
+- structured logging,
+- better CLI control.
 
-## Project structure
+## Structure
 
-- `src/config.js` — environment configuration
+- `src/config.js` — reads environment variables
+- `src/logger.js` — logs to console and `logs/automation.log`
 - `src/youtubeViewBot.js` — browser automation logic
 - `src/index.js` — CLI entrypoint
-- `main.py` — Python version using Playwright
-- `index.js` — top-level wrapper
+- `main.py` — Python version
+- `Dockerfile` — containerized run option
 
 ## Prerequisites
 
@@ -20,19 +26,19 @@ This project is designed as a configurable Playwright automation script with a c
 ## Install
 
 ```bash
+git clone https://github.com/palpite777/Youtube-Gold.git
+cd Youtube-Gold
 npm install
 npx playwright install chromium
 ```
 
 ## Environment
 
-Copy the example file and adjust the values:
-
 ```bash
 cp .env.example .env
 ```
 
-Example:
+Example variables:
 
 ```env
 PROXY=
@@ -41,6 +47,9 @@ SEARCH_QUERY=lofi hip hop radio
 MIN_WATCH_SECONDS=15
 MAX_WATCH_SECONDS=45
 HEADLESS=false
+SESSION_COUNT=1
+RANDOMIZE=true
+LOG_LEVEL=info
 ```
 
 ## Run
@@ -49,10 +58,16 @@ HEADLESS=false
 npm start
 ```
 
-Optional command-line arguments:
+### Optional CLI parameters
 
 ```bash
-node src/index.js --query "python tutorial" --min 20 --max 60 --headless true
+node src/index.js --query "python tutorial" --min 20 --max 60 --headless true --sessions 3
+```
+
+### Multiple sessions
+
+```bash
+npm run multi
 ```
 
 ## Python version
@@ -62,6 +77,13 @@ pip install -r requirements.txt
 python main.py
 ```
 
+## Docker
+
+```bash
+docker build -t youtube-gold .
+docker run --env-file .env youtube-gold
+```
+
 ## Notes
 
-This tool is intended for testing, research, and controlled educational scenarios only. Use it responsibly and in accordance with platform terms and local laws.
+Use this project only in controlled testing or educational environments. Respect platform rules, legal requirements, and your local policies.

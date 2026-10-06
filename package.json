@@ -1,11 +1,12 @@
 {
   "name": "youtube-gold",
-  "version": "1.0.0",
-  "description": "YouTube automation tool for controlled testing and research scenarios",
+  "version": "1.1.0",
+  "description": "Advanced YouTube automation tool for testing and research scenarios",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "node src/index.js --query \"lofi hip hop radio\" --min 15 --max 45",
+    "dev": "node src/index.js --query \"lofi hip hop radio\" --min 15 --max 45 --sessions 1",
+    "multi": "node src/index.js --query \"python tutorial\" --min 20 --max 60 --sessions 3",
     "test": "node -e \"console.log('No tests configured yet')\""
   },
   "dependencies": {

@@ -9,7 +9,8 @@ function getNumber(value, fallback) {
 
 function getBoolean(value, fallback) {
   if (value === undefined || value === null || value === "") return fallback;
-  return value === "true" || value === "1" || value === "yes";
+  const normalized = String(value).trim().toLowerCase();
+  return ["true", "1", "yes", "on"].includes(normalized);
 }
 
 const config = {
@@ -20,7 +21,9 @@ const config = {
   maxWatchSeconds: getNumber(process.env.MAX_WATCH_SECONDS, 45),
   headless: getBoolean(process.env.HEADLESS, false),
   userAgent: process.env.USER_AGENT || undefined,
-  maxSessionSeconds: getNumber(process.env.MAX_SESSION_SECONDS, 120),
+  sessionCount: getNumber(process.env.SESSION_COUNT, 1),
+  randomize: getBoolean(process.env.RANDOMIZE, true),
+  logLevel: process.env.LOG_LEVEL || "info",
 };
 
 module.exports = { config };

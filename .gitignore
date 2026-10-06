@@ -1,16 +1,9 @@
-# Dependências
 node_modules/
-
-# Logs
-npm-debug.log*
-
-# Variáveis de ambiente
 .env
-
-# Relatórios do Playwright
+.env.local
 playwright-report/
 test-results/
-
-# Sistema
+logs/
 .DS_Store
 Thumbs.db
+npm-debug.log*

@@ -9,16 +9,18 @@ load_dotenv()
 
 async def run():
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=os.getenv("HEADLESS", "false").lower() == "true")
+        headless = os.getenv("HEADLESS", "false").lower() in {"true", "1", "yes"}
+        browser = await p.chromium.launch(headless=headless)
 
+        proxy = os.getenv("PROXY") or None
         context = await browser.new_context(
-            proxy={"server": os.getenv("PROXY")} if os.getenv("PROXY") else None,
+            proxy={"server": proxy} if proxy else None,
             viewport={"width": 1440, "height": 900},
             ignore_https_errors=True,
+            user_agent=os.getenv("USER_AGENT") or None,
         )
 
         page = await context.new_page()
-
         youtube_url = os.getenv("YOUTUBE_URL", "https://www.youtube.com")
         query = os.getenv("SEARCH_QUERY", "lofi hip hop radio")
 
@@ -35,9 +37,12 @@ async def run():
         except Exception:
             await page.click("a[href*='watch?v=']")
 
-        watch_seconds = int(os.getenv("MIN_WATCH_SECONDS", "15"))
-        print(f"[INFO] Watching video for {watch_seconds} seconds...")
-        await page.wait_for_timeout(watch_seconds * 1000)
+        min_watch = int(os.getenv("MIN_WATCH_SECONDS", "15"))
+        max_watch = int(os.getenv("MAX_WATCH_SECONDS", "45"))
+        wait_seconds = min_watch if max_watch <= min_watch else min_watch + (abs(hash(asyncio.get_running_loop())) % (max_watch - min_watch + 1))
+
+        print(f"[INFO] Watching video for {wait_seconds} seconds...")
+        await page.wait_for_timeout(wait_seconds * 1000)
         await browser.close()
 
 

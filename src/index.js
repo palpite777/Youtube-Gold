@@ -13,6 +13,8 @@ function parseArgs(argv) {
     if (arg === "--headless") options.headless = next === "true" || next === "1";
     if (arg === "--min") options.minWatchSeconds = Number(next);
     if (arg === "--max") options.maxWatchSeconds = Number(next);
+    if (arg === "--sessions") options.sessionCount = Number(next);
+    if (arg === "--randomize") options.randomize = next === "true" || next === "1";
   }
 
   return options;
@@ -23,7 +25,7 @@ function parseArgs(argv) {
 
   try {
     await runBot(options);
-    console.log("[INFO] Automation finished successfully.");
+    console.log("[INFO] Automation completed successfully.");
   } catch (error) {
     console.error("[ERROR] Automation failed:");
     console.error(error.message);
