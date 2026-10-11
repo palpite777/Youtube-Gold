@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 
-const PAGE = String.raw\`<!doctype html>
+const PAGE = String.raw`<!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -31,7 +31,7 @@ const fmt=n=>Number(n||0).toLocaleString('pt-BR');
 function message(text,type){alertBox.textContent=text;alertBox.className='alert show '+type}
 form.addEventListener('submit',async e=>{e.preventDefault();const q=input.value.trim();if(!q)return;button.disabled=true;button.textContent='Consultando…';results.classList.add('hidden');message('Buscando dados reais do canal…','info');try{const r=await fetch('/api/channel?q='+encodeURIComponent(q),{headers:{Accept:'application/json'}});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||('A API respondeu HTTP '+r.status));document.getElementById('name').textContent=d.channel.title;document.getElementById('handle').textContent=d.channel.customUrl||d.channel.id;document.getElementById('avatar').src=d.channel.thumbnail||'';document.getElementById('channelLink').href='https://www.youtube.com/channel/'+encodeURIComponent(d.channel.id);document.getElementById('subs').textContent=d.channel.hiddenSubscriberCount?'Ocultos':fmt(d.channel.subscribers);document.getElementById('views').textContent=fmt(d.channel.views);document.getElementById('count').textContent=fmt(d.channel.videoCount);document.getElementById('recentCount').textContent=fmt(d.videos.length);document.getElementById('updated').textContent='Dados consultados em '+new Date().toLocaleString('pt-BR');const grid=document.getElementById('videos');grid.replaceChildren();if(!d.videos.length){grid.textContent='Nenhum vídeo recente encontrado.'}else{d.videos.forEach(v=>{const card=document.createElement('article');card.className='video';const img=document.createElement('img');img.loading='lazy';img.alt='Miniatura do vídeo';img.src=v.thumbnail||'';const body=document.createElement('div');body.className='body';const title=document.createElement('h3');title.textContent=v.title;const meta=document.createElement('div');meta.className='meta';meta.textContent=fmt(v.views)+' visualizações · '+new Date(v.publishedAt).toLocaleDateString('pt-BR');const link=document.createElement('a');link.href='https://www.youtube.com/watch?v='+encodeURIComponent(v.id);link.target='_blank';link.rel='noopener noreferrer';link.style.color='var(--gold)';link.textContent='Assistir ↗';body.append(title,meta,link);card.append(img,body);grid.append(card)})}results.classList.remove('hidden');message('Canal carregado. Os dados abaixo vieram da API do YouTube.','info')}catch(err){message(err.message||'Não foi possível consultar o canal.','error')}finally{button.disabled=false;button.textContent='Consultar canal'}});
 </script>
-</body></html>\`;
+</body></html>`;
 
 function sendJson(res, status, body) {
   res.statusCode = status;
