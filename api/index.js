@@ -123,26 +123,28 @@ async function getChannel(query, key) {
   };
 }
 async function handler(req, res) {
-  const user = process.env.WEB_USER;
-  const password = process.env.WEB_PASSWORD;
-  if (!user || !password) return sendJson(res, 503, { error: "Painel indisponível: configure WEB_USER e WEB_PASSWORD na Vercel." });
-  const auth = req.headers.authorization || "";
-  let suppliedUser = "", suppliedPassword = "";
-  try {
-    const decoded = Buffer.from(auth.startsWith("Basic ") ? auth.slice(6) : "", "base64").toString("utf8");
-    const colon = decoded.indexOf(":");
-    if (colon >= 0) { suppliedUser = decoded.slice(0, colon); suppliedPassword = decoded.slice(colon + 1); }
-  } catch (_) {}
-  if (!safeEqual(suppliedUser, user) || !safeEqual(suppliedPassword, password)) return unauthorized(res);
   const url = new URL(req.url, "https://vercel.invalid");
   const route = url.searchParams.get("route") || (url.pathname === "/api/channel" ? "channel" : "home");
-  res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Cache-Control", route === "channel" ? "public, max-age=30, s-maxage=60" : "no-store");
   if (req.method !== "GET" && req.method !== "HEAD") return sendJson(res, 405, { error: "Método não permitido." });
   if (route === "status") return sendJson(res, 200, { status: "online", output: "Painel online. API de análise pronta para consultas.", apiConfigured: Boolean(process.env.YOUTUBE_API_KEY) });
   if (route === "channel") {
     if (!process.env.YOUTUBE_API_KEY) return sendJson(res, 503, { error: "Falta configurar YOUTUBE_API_KEY nas variáveis de ambiente da Vercel. Ative a YouTube Data API v3 no Google Cloud e adicione a chave em Production." });
     try { return sendJson(res, 200, await getChannel(url.searchParams.get("q"), process.env.YOUTUBE_API_KEY)); }
     catch (error) { return sendJson(res, 400, { error: error.message || "Falha ao consultar o canal." }); }
+  }
+  if (route === "start" || route === "stop") return sendJson(res, 410, { error: "Ações de automação não fazem parte do painel de analytics." });
+  const user = process.env.WEB_USER;
+  const password = process.env.WEB_PASSWORD;
+  if (user && password) {
+    const auth = req.headers.authorization || "";
+    let suppliedUser = "", suppliedPassword = "";
+    try {
+      const decoded = Buffer.from(auth.startsWith("Basic ") ? auth.slice(6) : "", "base64").toString("utf8");
+      const colon = decoded.indexOf(":");
+      if (colon >= 0) { suppliedUser = decoded.slice(0, colon); suppliedPassword = decoded.slice(colon + 1); }
+    } catch (_) {}
+    if (!safeEqual(suppliedUser, user) || !safeEqual(suppliedPassword, password)) return unauthorized(res);
   }
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/html; charset=utf-8");
