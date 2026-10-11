@@ -13,7 +13,7 @@ main{max-width:1080px;margin:0 auto;padding:36px 20px 60px}.top{display:flex;jus
 <body><main>
 <header class="top"><div class="brand"><div class="mark">YG</div><div><div class="eyebrow">YouTube Gold · QA</div><h1>Site Check Console</h1><p>Painel de teste de disponibilidade dos seus sites</p></div></div><div class="pill">EXECUÇÃO NO NAVEGADOR</div></header>
 <div class="grid">
-<section class="card"><h2>Configurar rodada</h2><p class="hint">Informe URLs de sites que você controla ou tem autorização para testar.</p>
+<section class="card"><h2>Configurar rodada</h2><p class="hint">Cole as URLs HTTP ou HTTPS que deseja testar ou abrir.</p>
 <label for="urls">URLs · uma por linha (máximo 20)</label><textarea id="urls" spellcheck="false" placeholder="https://meusite.com&#10;https://staging.meusite.com"></textarea>
 <div class="row"><div><label for="limit">Limite por rodada</label><select id="limit"><option>1</option><option>3</option><option selected>5</option><option>10</option><option>20</option></select></div><div><label for="mode">Modo de teste</label><select id="mode"><option value="check">Checar resposta HTTP</option><option value="open">Abrir páginas no navegador</option></select></div></div>
 <div class="actions"><button class="primary" id="start">▶ Iniciar teste</button><button class="secondary" id="stop" disabled>■ Parar</button><button class="secondary" id="clear">Limpar log</button></div>
@@ -32,10 +32,8 @@ function log(msg,cls=''){const el=$('log');const line=document.createElement('di
 function stats(){ $('total').textContent=rows.length;$('ok').textContent=rows.filter(x=>x.result==='OK').length;$('fail').textContent=rows.filter(x=>x.result!=='OK').length}
 function elapsed(){if(!running)return;const s=Math.floor((Date.now()-startedAt)/1000);$('elapsed').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
 function normalize(s){let u;try{u=new URL(/^https?:\/\//i.test(s)?s:'https://'+s)}catch{return null}if(!['http:','https:'].includes(u.protocol)||!u.hostname)return null;return u.href}
-function forbidden(u){const h=new URL(u).hostname.toLowerCase();return h==='youtube.com'||h.endsWith('.youtube.com')||h==='youtu.be'||h.endsWith('.youtu.be')}
 async function start(){if(running)return;const lines=$('urls').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(!lines.length){log('Insira pelo menos uma URL.','bad');return}
 const limit=Number($('limit').value),list=lines.slice(0,limit).map(normalize);if(list.some(x=>!x)){log('Há uma URL inválida. Corrija e tente novamente.','bad');return}
-if(list.some(forbidden)){log('Este painel não automatiza visitas ao YouTube. Use URLs dos seus próprios sites.','bad');return}
 stopped=false;running=true;startedAt=Date.now();rows=[];$('start').disabled=true;$('stop').disabled=false;$('state').textContent='Teste em andamento';timer=setInterval(elapsed,1000);log('Rodada iniciada: '+list.length+' URL(s).');
 for(const url of list){if(stopped)break;const row={timestamp:new Date().toISOString(),url,mode:$('mode').value,result:'FALHA',detail:''};
 if($('mode').value==='open'){try{const win=window.open(url,'_blank','noopener');if(win){row.result='OK';row.detail='Aba solicitada ao navegador';log('Abertura solicitada: '+url,'good')}else{row.detail='Pop-up bloqueado pelo navegador';log('Pop-up bloqueado: '+url,'bad')}}catch(e){row.detail=String(e);log('Falha ao abrir '+url+': '+e,'bad')}}
