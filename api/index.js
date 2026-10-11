@@ -53,9 +53,9 @@ function normalizeQuery(input) {
   let q = String(input || "").trim();
   if (!q || q.length > 300) return null;
   try {
-    if (/^https?:\\/\\//i.test(q)) {
+    if (/^https?:\/\//i.test(q)) {
       const u = new URL(q);
-      if (!/(^|\\.)youtube\\.com$/i.test(u.hostname) && !/(^|\\.)youtu\\.be$/i.test(u.hostname)) return null;
+      if (!/(^|\.)youtube\.com$/i.test(u.hostname) && !/(^|\.)youtu\.be$/i.test(u.hostname)) return null;
       const parts = u.pathname.split("/").filter(Boolean);
       if (parts[0] === "channel" && parts[1]) return { id: parts[1] };
       if (parts[0] === "user" && parts[1]) return { username: parts[1] };
@@ -63,9 +63,9 @@ function normalizeQuery(input) {
       return null;
     }
   } catch (_) { return null; }
-  if (/^UC[\\w-]{20,}$/.test(q)) return { id: q };
+  if (/^UC[\w-]{20,}$/.test(q)) return { id: q };
   if (q.startsWith("@")) return { handle: q };
-  if (/^[\\w.-]{2,100}$/.test(q)) return { handle: "@" + q };
+  if (/^[\w.-]{2,100}$/.test(q)) return { handle: "@" + q };
   return null;
 }
 async function youtubeRequest(resource, params, key) {
