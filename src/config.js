@@ -19,14 +19,15 @@ const config = {
   maxWatchSeconds: getNumber(process.env.MAX_WATCH_SECONDS, 45),
   headless: getBoolean(process.env.HEADLESS, false),
   userAgent: process.env.USER_AGENT || undefined,
-  stealth: getBoolean(process.env.STEALTH, true),
+  stealth: getBoolean(process.env.STEALTH, false),
   locale: process.env.LOCALE || "en-US",
-  timezone: process.env.TIMEZONE || "America/New_York",
-  randomize: getBoolean(process.env.RANDOMIZE, true),
+  timezone: process.env.TIMEZONE || "America/Sao_Paulo",
+  randomize: getBoolean(process.env.RANDOMIZE, false),
   sessionCount: getNumber(process.env.SESSION_COUNT, 1),
   proxy: process.env.PROXY || undefined,
   webUser: process.env.WEB_USER || "admin",
-  webPassword: process.env.WEB_PASSWORD || "admin123",
+  // Set WEB_PASSWORD as a deployment secret; no default password is shipped.
+  webPassword: process.env.WEB_PASSWORD || undefined,
 };
 
 module.exports = { config };
