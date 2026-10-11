@@ -1075,7 +1075,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      const BASE_URL = 'http://localhost:8080';
+      const BASE_URL = window.location.origin;
+
+      async function readApiResponse(response) {
+        const contentType = response.headers.get('content-type') || '';
+        let body;
+        if (contentType.includes('application/json')) {
+          body = await response.json();
+        } else {
+          body = { message: await response.text() };
+        }
+        if (!response.ok) {
+          throw new Error(body.message || body.error || `A API respondeu HTTP ${response.status}.`);
+        }
+        return body;
+      }
 
       // DOM Elements
       const statusDot = document.getElementById('statusDot');
@@ -1274,6 +1288,7 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
           });
+          await readApiResponse(response);
 
           if (response.ok) {
             addLogEntry('✓ Automação iniciada com sucesso', 'success');
@@ -1290,9 +1305,10 @@
             stopBtn.disabled = true;
           }
         } catch (error) {
-          addLogEntry(`✗ Erro de conexão: ${error.message}`, 'error');
-          setStatus('error', 'Erro de conexão');
-          showToast(`✗ Erro de conexão: ${error.message}`, 'error');
+          addLogEntry(`✗ Não foi possível iniciar: ${error.message}`, 'error');
+          setStatus('error', 'Não foi possível iniciar');
+          statusDetails.textContent = error.message;
+          showToast(`Não foi possível iniciar: ${error.message}`, 'error', 7000);
           startBtn.disabled = false;
           startBtn.classList.remove('loading');
           stopBtn.disabled = true;
@@ -1310,6 +1326,7 @@
 
         try {
           const response = await fetch(`${BASE_URL}/api/stop`, { method: 'POST' });
+          await readApiResponse(response);
 
           if (response.ok) {
             addLogEntry('✓ Automação parada com sucesso', 'success');
@@ -1323,9 +1340,10 @@
             showToast('✗ Erro ao parar automação', 'error');
           }
         } catch (error) {
-          addLogEntry(`✗ Erro de conexão: ${error.message}`, 'error');
-          setStatus('error', 'Erro de conexão');
-          showToast(`✗ Erro de conexão: ${error.message}`, 'error');
+          addLogEntry(`✗ Não foi possível parar: ${error.message}`, 'error');
+          setStatus('error', 'Não foi possível parar');
+          statusDetails.textContent = error.message;
+          showToast(`Não foi possível parar: ${error.message}`, 'error', 7000);
         }
       });
 
@@ -1348,9 +1366,9 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
           });
+          const result = await readApiResponse(response);
 
           if (response.ok) {
-            const result = await response.json();
             if (result.leads && Array.isArray(result.leads)) {
               result.leads.forEach(lead => {
                 addLeadToTable(lead.company, lead.segment, lead.phone, lead.email);
@@ -1366,8 +1384,8 @@
             showToast('✗ Erro ao coletar leads', 'error');
           }
         } catch (error) {
-          addLogEntry(`✗ Erro de conexão: ${error.message}`, 'error');
-          showToast(`✗ Erro de conexão`, 'error');
+          addLogEntry(`✗ Não foi possível coletar leads: ${error.message}`, 'error');
+          showToast(`Não foi possível coletar leads: ${error.message}`, 'error', 7000);
         } finally {
           collectBtn.disabled = false;
         }
@@ -1386,22 +1404,14 @@
         showToast('✓ Dashboard pronto!', 'success', 2500);
       });
 
-      // Simular atualização de métricas a cada 10 segundos
+      // Atualiza métricas somente com dados reais da API; nunca simula visualizações.
       setInterval(async () => {
         try {
           const response = await fetch(`${BASE_URL}/api/status`);
           if (response.ok) {
             const data = await response.json();
-            if (data.status === 'running') {
-              const newViews = metrics.views + Math.floor(Math.random() * 50);
-              const newMinutes = metrics.minutes + Math.floor(Math.random() * 10);
-              updateMetrics(newViews, newMinutes);
-              
-              // Notificação aleatória de proxy
-              if (Math.random() > 0.7) {
-                showToast('🔄 Proxy trocado com sucesso', 'info', 2500);
-                addLogEntry('✓ Proxy foi trocado automaticamente', 'success');
-              }
+            if (typeof data.views === 'number' && typeof data.minutes === 'number') {
+              updateMetrics(data.views, data.minutes);
             }
           }
         } catch (error) {
